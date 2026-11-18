@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- WK LV As-Built — Nyanza. Copyright (c) 2026 Ir Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved. Unauthorised copying or use is prohibited. -->
+<!-- WK LV As-Built — Nyanza. Copyright (c) 2026 Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved. Unauthorised copying or use is prohibited. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WK LV As-Built — Nyanza</title>
-<meta name="author" content="Ir Wilbert KIRARA — Expert Surveyor in Electrical Power Lines">
+<meta name="author" content="Eng. Wilbert KIRARA — Expert Surveyor in Electrical Power Lines">
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon-32.png" sizes="32x32">
@@ -215,14 +215,14 @@
     <div class="field req"><label for="g_name">Full name</label><input id="g_name" placeholder="e.g. Jean Bosco NIYONZIMA" autocapitalize="words"></div>
     <div class="field"><label for="g_tel">Phone <em>optional</em></label><input id="g_tel" inputmode="tel" placeholder="07XXXXXXXX"></div>
     <button class="act" id="g_ok">Continue</button>
-    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:12px">WK LV As-Built — created by <b>Ir Wilbert KIRARA</b>,<br>Expert Surveyor in Electrical Power Lines</div>
+    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:12px">WK LV As-Built — created by <b>Eng. Wilbert KIRARA</b>,<br>Expert Surveyor in Electrical Power Lines</div>
   </div>
 </div>
 
 <header>
   <div class="hrow">
     <img class="logo" src="icon-192.png" alt="">
-    <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by">by Ir Wilbert KIRARA</small></div>
+    <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by">by Eng. Wilbert KIRARA</small></div>
     <span class="hsp"></span>
     <button class="sync off" id="syncChip" onclick="syncNow(true)">☁ off</button>
     <button class="agent" id="agentpill">👤 —</button>
@@ -259,6 +259,35 @@
 
   <!-- ================= CAPTURE ================= -->
   <section id="tab-capture">
+    <div class="card flush" id="mapcard">
+      <div class="mapbar">
+        <button id="mapSat">Satellite</button>
+        <button id="mapDiagram">Diagram</button>
+        <button id="mapMe" aria-pressed="false">◎ <span>My position</span></button>
+        <span class="netpill" id="netPill">…</span>
+      </div>
+      <svg id="minimap" viewBox="0 0 320 240" style="width:100%;height:240px;display:block;background:#f8fafc" aria-label="Collected points"></svg>
+      <div id="satmap" style="display:none;width:100%;height:340px"></div>
+      <div id="satnote" class="note" style="display:none;padding:6px 12px"></div>
+      <div class="legend">
+        <span><i style="background:#5D6B75"></i>pole</span><span><i style="background:#12795B"></i>customer</span>
+        <span><i style="background:#D93A2B"></i>transformer</span><span><i style="background:#2563eb"></i>you</span>
+        <span id="maplbl"></span>
+      </div>
+      <div class="pad" style="padding-top:6px">
+        <p class="note" style="margin:0">On satellite: tap a point to edit it, drag it if the GPS was off. Red squares are the design transformers.</p>
+        <p class="note" id="dlbar" style="margin:6px 0 0;display:none;color:var(--accent);font-weight:700"></p>
+        <details class="sub" style="margin-top:4px">
+          <summary>Offline map <span id="tilestat" class="note" style="font-weight:400"></span></summary>
+          <div class="btn-row" style="margin-top:6px">
+            <button class="act ghost" id="btn_dlmap" style="padding:9px">⬇ Save map offline</button>
+            <button class="act ghost" id="btn_clrmap" style="padding:9px">Clear offline map</button>
+          </div>
+          <p class="note" style="margin:6px 0 0">Do it before going to the field, with Wi-Fi or mobile data, so the satellite view still works with no signal.</p>
+        </details>
+      </div>
+    </div>
+
     <details id="setup" class="card flush" open>
       <summary>⚙ Transformer zone <span id="setuplbl" style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)"></span></summary>
       <div class="pad">
@@ -299,32 +328,6 @@
         <div id="editpos" class="flag warnlvl" style="display:none;margin:10px 0 0">Editing a saved point. Re-capture to move it, or drag it on the satellite map, then Update.</div>
         <div id="gpsdiag" class="note"></div>
         <div class="tip">Stand at the pole / meter in open sky and hold the phone still. The app averages satellite fixes (up to 60 s) and ignores network positions. CRS: ITRF2005 / TM Rwanda (CM 30°E, k0 0.9999, FE 500 000, FN 5 000 000).</div>
-      </div>
-      <div class="mapbar">
-        <button id="mapSat">Satellite</button>
-        <button id="mapDiagram">Diagram</button>
-        <button id="mapMe" aria-pressed="false">◎ <span>My position</span></button>
-        <span class="netpill" id="netPill">…</span>
-      </div>
-      <svg id="minimap" viewBox="0 0 320 240" style="width:100%;height:240px;display:block;background:#f8fafc" aria-label="Collected points"></svg>
-      <div id="satmap" style="display:none;width:100%;height:340px"></div>
-      <div id="satnote" class="note" style="display:none;padding:6px 12px"></div>
-      <div class="legend">
-        <span><i style="background:#5D6B75"></i>pole</span><span><i style="background:#12795B"></i>customer</span>
-        <span><i style="background:#D93A2B"></i>transformer</span><span><i style="background:#2563eb"></i>you</span>
-        <span id="maplbl"></span>
-      </div>
-      <div class="pad" style="padding-top:6px">
-        <p class="note" style="margin:0">On satellite: tap a point to edit it, drag it if the GPS was off. Red squares are the design transformers.</p>
-        <p class="note" id="dlbar" style="margin:6px 0 0;display:none;color:var(--accent);font-weight:700"></p>
-        <details class="sub" style="margin-top:4px">
-          <summary>Offline map <span id="tilestat" class="note" style="font-weight:400"></span></summary>
-          <div class="btn-row" style="margin-top:6px">
-            <button class="act ghost" id="btn_dlmap" style="padding:9px">⬇ Save map offline</button>
-            <button class="act ghost" id="btn_clrmap" style="padding:9px">Clear offline map</button>
-          </div>
-          <p class="note" style="margin:6px 0 0">Do it before going to the field, with Wi-Fi or mobile data, so the satellite view still works with no signal.</p>
-        </details>
       </div>
     </div>
 
@@ -424,7 +427,7 @@
       <div class="pad exgrid">
         <button class="act ghost hidden" id="installBtn" onclick="doInstall()">⤓ Install on this phone</button>
         <button class="act ghost" onclick="prepareOCR(true)">🪪 Prepare the ID-card reader for offline use</button>
-        <div class="about"><div class="mono">WK</div><div><b>Ir Wilbert KIRARA</b><span>Expert Surveyor in Electrical Power Lines<br>Creator of WK LV As-Built and WK Connect Survey</span></div></div>
+        <div class="about"><div class="mono">WK</div><div><b>Eng. Wilbert KIRARA</b><span>Expert Surveyor in Electrical Power Lines<br>Creator of WK LV As-Built and WK Connect Survey</span></div></div>
         <div class="note" id="appver"></div>
       </div>
     </div>
@@ -436,7 +439,7 @@
     <div id="refbody"></div>
   </section>
 </div>
-<div class="credit">WK LV As-Built · Nyanza · created by <b>Ir Wilbert KIRARA</b> · Expert Surveyor in Electrical Power Lines</div>
+<div class="credit">WK LV As-Built · Nyanza · created by <b>Eng. Wilbert KIRARA</b> · Expert Surveyor in Electrical Power Lines</div>
 
 <div class="savebar" id="savebar"><div class="in"><div id="savestate" style="color:var(--good)">✓ saved on phone</div><button class="act" id="btn_save">💾 Save point</button></div></div>
 <div class="toast" id="toast"></div>

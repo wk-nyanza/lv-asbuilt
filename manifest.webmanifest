@@ -1,7 +1,7 @@
 {
   "name": "WK LV As-Built — Nyanza",
   "short_name": "WK LV",
-  "description": "WK LV As-Built by Ir Wilbert KIRARA, Expert Surveyor in Electrical Power Lines — Nyanza EPC LV network as-built: transformer, poles, spans and customers, satellite GPS in TM Rwanda, KMZ / shapefile / CSV export.",
+  "description": "WK LV As-Built by Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines — Nyanza EPC LV network as-built: transformer, poles, spans and customers, satellite GPS in TM Rwanda, KMZ / shapefile / CSV export.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

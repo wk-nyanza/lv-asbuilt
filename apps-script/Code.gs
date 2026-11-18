@@ -1,6 +1,6 @@
 /**
  * WK LV As-Built — Nyanza : synchronisation server (Google Apps Script)
- * (c) 2026 Ir Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved.
+ * (c) 2026 Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved.
  * ---------------------------------------------------------------------
  * Receives the points + stamped photos from the phones and stores them in:
  *   - this Google Sheet: one tab per layer (Transformers, Poles, Customers),
@@ -13,7 +13,7 @@
  * TOKEN must equal SYNC_TOKEN in app.js.
  */
 const TOKEN = 'wklvnyz-7Qm2Xc9TfR4pLs8VdK3w';
-const SHEET_ID = '';            // leave '' when the script is bound to the Sheet
+const SHEET_ID = '1Arle-vNaPLpHZDYff3MTZtBxY37G78dALa9XITsF4T8'; // Google Sheet "WK LV As-Built - Nyanza"
 const ROOT_FOLDER = 'WK LV As-Built - Nyanza Photos';
 const TABS = ['Transformers', 'Poles', 'Customers'];
 const TEXT_COLS = ['Meter_number', 'ID', 'Phone_number', 'UPI', 'HSE No.', 'POLES', 'Pole_Numbe', 'From_Pole'];

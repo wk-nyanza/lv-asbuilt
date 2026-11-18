@@ -1,7 +1,7 @@
 WK LV AS-BUILT — NYANZA (installable phone app / PWA)
 =====================================================
-Created by Ir Wilbert KIRARA, Expert Surveyor in Electrical Power Lines.
-(c) 2026 Ir Wilbert KIRARA. All rights reserved.
+Created by Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines.
+(c) 2026 Eng. Wilbert KIRARA. All rights reserved.
 Project: Design, supply, and installation of low voltage and medium voltage lines
 and service connections in Nyanza (EPC Nyanza, JV REAL/PATRONICS, EDCL).
 Field engine: Voltline (same author), adapted to Nyanza.
