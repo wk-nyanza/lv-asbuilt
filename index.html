@@ -6,253 +6,266 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WK LV As-Built — Nyanza</title>
 <meta name="author" content="Ir Wilbert KIRARA — Expert Surveyor in Electrical Power Lines">
+<meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#143642">
 <link rel="icon" href="favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WK LV">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="leaflet/leaflet.css">
 <style>
+  /* WK LV As-Built — WK Connect design system */
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   :root{
-    --paper:#EEF1EF; --card:#FFFFFF; --ink:#143642; --steel:#5E6E72;
-    --rule:#DCE3E1; --signal:#D98324; --live:#C8463A; --earth:#2F8F6B; --blue:#1C7293;
-    --copper:#D98324; --sky:#1C7293;
-    --shadow:0 1px 2px rgba(20,54,66,.06),0 4px 16px rgba(20,54,66,.05);
-    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-    --sans:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --ink:#0f172a;--ink2:#1e293b;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;
+    --accent:#0369a1;--accent2:#0ea5e9;--good:#059669;--fair:#d97706;--poor:#dc2626;--man:#2563eb;
+    --r:14px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+    /* names used by the field engine */
+    --paper:#f8fafc;--steel:#64748b;--rule:#e2e8f0;--live:#dc2626;--earth:#059669;--copper:#d97706;--signal:#d97706;
+    --blue:#0369a1;--sky:#0ea5e9;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 3px rgba(15,23,42,.05);
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;
-    -webkit-font-smoothing:antialiased}
-  .wrap{max-width:820px;margin:0 auto;padding:16px 14px 130px}
-  .stripe{display:flex;height:4px}
-  .stripe i{flex:1}
-  .stripe i:nth-child(1){background:var(--live)}
-  .stripe i:nth-child(2){background:var(--copper)}
-  .stripe i:nth-child(3){background:var(--sky)}
-  .stripe i:nth-child(4){background:var(--earth)}
-  header{background:var(--ink);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(20,54,66,.12)}
-  .head-in{max-width:820px;margin:0 auto;padding:13px 16px 10px;display:flex;align-items:center;gap:12px}
-  .mark{width:34px;height:34px;flex:0 0 auto}
-  .brand{font-weight:800;font-size:21px;letter-spacing:-.01em;line-height:1}
-  .brand span{color:var(--copper)}
-  .sub{font-size:12px;color:#9DB4BC;margin-top:3px;letter-spacing:0}
-  .pill{margin-left:auto;font-size:12px;color:#fff;background:rgba(255,255,255,.12);padding:6px 11px;border-radius:999px;font-weight:600;
-    border:1px solid rgba(255,255,255,.18)}
-  nav{display:flex;background:var(--ink);max-width:820px;margin:0 auto;padding:0 10px 10px;gap:4px;overflow-x:auto}
-  nav button{flex:1 1 0;min-width:0;background:transparent;border:0;color:#9DB4BC;font-size:12.5px;
-    font-weight:600;padding:8px 2px;border-radius:9px;cursor:pointer;white-space:nowrap;font-family:var(--sans)}
-  nav button[aria-selected="true"]{background:rgba(255,255,255,.14);color:#fff}
-  nav button b{display:block;width:max-content;margin:1px auto 0;padding:0 6px;border-radius:999px;font-size:12px;font-weight:700;color:var(--copper)}
-  nav button[aria-selected="true"] b{color:#fff}
-  h2{font-size:15px;color:var(--ink);margin:20px 2px 9px;font-weight:700;letter-spacing:-.01em}
-  .card{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-  label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin:0 0 6px}
-  label em{font-style:normal;color:var(--steel);font-weight:400;font-size:12px}
-  input,select{width:100%;font-family:var(--sans);font-size:16px;padding:13px;border:1.5px solid var(--rule);border-radius:10px;background:#fff;color:var(--ink)}
-  select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235E6E72' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 13px center;padding-right:40px}
-  input[readonly]{background:#F3F6F4;color:var(--steel)}
-  input:focus,select:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px rgba(28,114,147,.15)}
-  button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
-  .field{margin-bottom:14px}
-  .req label::after{content:" *";color:var(--live)}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans)}
+  button{font:inherit;cursor:pointer}
+  .hidden{display:none!important}
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:40;background:var(--ink);color:#fff;padding-top:var(--safe-t);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  .hrow{max-width:780px;margin:0 auto;padding:10px 14px 6px;display:flex;align-items:center;gap:10px}
+  .logo{width:34px;height:34px;border-radius:9px;flex:0 0 auto}
+  .brand{font-weight:800;font-size:16px;letter-spacing:-.01em;line-height:1.1;min-width:0;white-space:nowrap;overflow:hidden}
+  .brand small{display:block;font-weight:500;font-size:11px;color:#94a3b8;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand small.by{color:#7dd3fc;letter-spacing:0}
+  .hsp{margin-left:auto}
+  .agent{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:99px;padding:6px 11px;font-size:12.5px;font-weight:600;max-width:30vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sync{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#e2e8f0;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+  .sync.ok{background:#064e3b;border-color:#065f46;color:#a7f3d0}.sync.pend{background:#78350f;border-color:#92400e;color:#fde68a}
+  .sync.err{background:#7f1d1d;border-color:#991b1b;color:#fecaca}.sync.off{opacity:.7}
+  .gpsbar{max-width:780px;margin:0 auto;padding:0 14px 6px}
+  .gpschip{display:flex;align-items:center;gap:10px;border-radius:12px;padding:8px 12px;background:#1e293b;border:1px solid #334155}
+  .gpschip .dot{width:11px;height:11px;border-radius:50%;background:#64748b;flex:0 0 auto;box-shadow:0 0 0 4px rgba(100,116,139,.25)}
+  .gpschip.good .dot{background:#10b981;box-shadow:0 0 0 4px rgba(16,185,129,.25)}
+  .gpschip.fair .dot{background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.25)}
+  .gpschip.poor .dot{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.25)}
+  .gpschip.wait .dot{animation:pulse 1.2s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .gpschip .big{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .gpschip .lbl{font-size:11.5px;color:#cbd5e1;line-height:1.25}
+  .gpschip .src{margin-left:auto;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:#334155;color:#e2e8f0;white-space:nowrap}
+  .gpschip .src.sat{background:#064e3b;color:#a7f3d0}.gpschip .src.net{background:#7c2d12;color:#fed7aa}
+  .progress{max-width:780px;margin:0 auto;padding:0 14px 4px;font:600 11px var(--mono);color:#94a3b8}
+  nav{max-width:780px;margin:0 auto;display:flex;padding:0 6px;overflow-x:auto}
+  nav button{flex:1 0 auto;background:none;border:0;border-bottom:3px solid transparent;color:#94a3b8;font-weight:700;font-size:12.5px;padding:9px 4px;white-space:nowrap}
+  nav{scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+  nav button[aria-selected="true"]{color:#fff;border-color:var(--accent2)}
+  nav button b{display:inline-block;margin-left:3px;padding:0 5px;border-radius:99px;font-size:11px;background:#334155;color:#e2e8f0}
+  nav button[aria-selected="true"] b{background:var(--accent2);color:#fff}
+  /* ---------- layout ---------- */
+  .wrap{max-width:780px;margin:0 auto;padding:14px 14px calc(110px + var(--safe-b))}
+  h2{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:#334155;margin:18px 2px 8px;font-weight:800}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:14px;padding:14px}
+  .card.flush{padding:0;overflow:hidden}
+  .ch{margin:0;padding:11px 14px;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:#334155;background:#f8fafc;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;font-weight:800}
+  .ch .req{margin-left:auto;font-size:10.5px;color:var(--poor);letter-spacing:0;text-transform:none;font-weight:700}
+  .pad{padding:14px}
+  label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin:0 0 4px}
+  label em{font-style:normal;font-weight:500;color:#94a3b8}
+  input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid #cbd5e1;border-radius:10px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(14,165,233,.18)}
+  input[readonly]{background:#f8fafc;color:#334155}
+  button:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+  .field{margin-bottom:12px}
+  .req label::after{content:" *";color:var(--poor)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:540px){.grid2{grid-template-columns:1fr}}
-  .fix{background:var(--ink);color:#E8EEF0;border-radius:12px;padding:12px}
-  .fix .row{display:flex;gap:18px;font-family:var(--mono);font-size:17px}
-  .fix .k{font-family:var(--sans);font-size:12px;color:#9DB4BC;display:block;font-weight:600}
-  .fix .sm{border-top:1px solid #2C4A56;margin-top:10px;padding-top:8px;font-size:12px;color:#9DB4BC;font-family:var(--mono)}
-  .acc{display:inline-block;font-size:13px;padding:7px 12px;border-radius:999px;font-weight:700;color:#fff}
-  .acc.good{background:var(--earth)}
-  .acc.ok{background:var(--copper)}
-  .acc.bad{background:var(--live)}
-  .acc.none{background:#51666C}
-  .chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:4px 0 12px;position:relative}
-  .chips::before{content:"";position:absolute;left:12%;right:12%;top:31px;height:2px;background:var(--rule);z-index:0}
-  .chip{position:relative;z-index:1;border:1.5px solid var(--rule);background:#fff;border-radius:16px;padding:10px 4px 10px;font-family:var(--sans);
-    cursor:pointer;color:var(--ink);text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .08s,background .15s,border-color .15s}
-  .chip .step{position:absolute;top:7px;left:9px;font:700 11px var(--mono);color:var(--steel)}
-  .chip .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#F1F4F3;background:color-mix(in srgb,var(--c) 11%,#fff)}
-  .chip svg{width:24px;height:24px;stroke:var(--c);stroke-width:1.9;fill:none}
-  .chip .cl{font-size:14px;font-weight:800;letter-spacing:-.01em;margin-top:3px}
-  .chip .cn{font:600 11px var(--mono);color:var(--steel)}
-  .chip[aria-pressed="true"]{background:var(--c);color:#fff;border-color:var(--c);box-shadow:0 6px 18px -6px var(--c)}
-  .chip[aria-pressed="true"] .ic{background:rgba(255,255,255,.16)}
-  .chip[aria-pressed="true"] svg{stroke:#fff}
-  .chip[aria-pressed="true"] .step,.chip[aria-pressed="true"] .cn{color:rgba(255,255,255,.78)}
-  .chip:active{transform:scale(.97)}
-  .fsec{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:800;color:var(--steel);margin:20px 0 10px}
-  .fsec::after{content:"";flex:1;height:1px;background:var(--rule)}
-  #form>.fsec:first-child{margin-top:4px}
+  @media(max-width:380px){.grid2{grid-template-columns:1fr}}
+  .withscan{display:flex;gap:6px}.withscan input{flex:1;min-width:0}
+  .scanbtn{flex:0 0 auto;border:1.5px solid #cbd5e1;background:#fff;border-radius:10px;padding:0 12px;font-size:18px}
+  .idtools{display:flex;gap:8px;margin:0 0 12px}.idtools .act{flex:1;padding:11px}
+  /* ---------- capture (position) ---------- */
+  .cap{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+  .ring{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c,#94a3b8) calc(var(--p,0)*1%),#e2e8f0 0);position:relative}
+  .ring::after{content:"";position:absolute;inset:8px;border-radius:50%;background:#fff}
+  .ring div{position:relative;z-index:1;text-align:center;line-height:1.05}
+  .ring b{font-size:19px;font-variant-numeric:tabular-nums}
+  .ring small{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+  .capinfo{font-size:13px;color:#334155;min-width:0}
+  .capinfo .st{font-weight:800;font-size:15px;margin-bottom:2px}
+  .capinfo .mono{font-family:var(--mono);font-size:13px}
+  .row2{display:flex;gap:10px;margin-top:12px}.row2 .act{flex:1}
+  .tip{font-size:12px;color:#475569;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:8px 10px;margin-top:12px}
+  #gpsadm{margin-top:10px;font-size:12.5px;border-radius:9px;padding:7px 10px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+  #gpsadm:empty{display:none}
+  .mapbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px solid var(--line);align-items:center}
+  .mapbar button{border:1.5px solid #cbd5e1;background:#fff;color:#334155;border-radius:9px;padding:7px 10px;font-size:12.5px;font-weight:700}
+  .mapbar button[aria-pressed="true"]{background:var(--ink2);color:#fff;border-color:var(--ink2)}
+  .netpill{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px}
+  .net-on{background:#dcfce7;color:#166534}.net-off{background:#fee2e2;color:#991b1b}
+  #satmap,#minimap{border-top:1px solid var(--line)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:8px 12px 2px;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+  /* ---------- what to record ---------- */
+  .chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 14px}
+  .chip{position:relative;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px 4px;cursor:pointer;color:var(--ink);text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:var(--shadow)}
+  .chip .step{position:absolute;top:6px;left:9px;font:700 11px var(--mono);color:var(--muted)}
+  .chip .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#f1f5f9}
+  .chip svg{width:23px;height:23px;stroke:var(--c);stroke-width:1.9;fill:none}
+  .chip .cl{font-size:14px;font-weight:800;margin-top:2px}
+  .chip .cn{font:600 11px var(--mono);color:var(--muted)}
+  .chip[aria-pressed="true"]{background:var(--c);color:#fff;border-color:var(--c);box-shadow:0 6px 16px -6px var(--c)}
+  .chip[aria-pressed="true"] .ic{background:rgba(255,255,255,.16)}.chip[aria-pressed="true"] svg{stroke:#fff}
+  .chip[aria-pressed="true"] .step,.chip[aria-pressed="true"] .cn{color:rgba(255,255,255,.8)}
+  /* ---------- form ---------- */
+  .formcard{border-top:4px solid var(--fc,var(--ink))}
+  .fsec{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#334155;margin:16px 0 10px}
+  .fsec::after{content:"";flex:1;height:1px;background:var(--line)}
+  #form>.fsec:first-child{margin-top:2px}
   .fgrid{display:grid;grid-template-columns:1fr 1fr;column-gap:10px}
   .fgrid>.field{grid-column:1/-1;min-width:0}
-  .fgrid>.field.half{grid-column:auto}
-  .fgrid>.field.half{display:flex;flex-direction:column}
+  .fgrid>.field.half{grid-column:auto;display:flex;flex-direction:column}
   .fgrid>.field.half>label{flex:1 0 auto}
-  .fgrid>.field.half label em{display:block}
-  .opts.seg{display:flex;gap:0;border:1.5px solid var(--rule);border-radius:10px;overflow:hidden;background:#fff}
-  .opts.seg .opt{flex:1;border:0;border-radius:0;border-left:1.5px solid var(--rule);text-align:center;min-height:48px;padding:10px 6px}
-  .opts.seg .opt:first-child{border-left:0}
-  .opts.seg .opt[aria-pressed="true"]{background:var(--ink);color:#fff}
-  .formcard{border-top:4px solid var(--fc,var(--ink))}
-  details.sub>summary{cursor:pointer;font-weight:700;font-size:13px;padding:8px 2px;list-style:none;color:var(--ink)}
-  details.sub>summary::-webkit-details-marker{display:none}
-  details.sub>summary::before{content:"\25B8  ";color:var(--steel)}
-  details.sub[open]>summary::before{content:"\25BE  "}
-  .exgrid{display:grid;gap:8px}
-  .exbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--rule);border-radius:12px;background:#fff;
-    font-family:var(--sans);color:var(--ink);cursor:pointer}
-  .exbtn b{display:block;font-size:15px}
-  .exbtn small{display:block;font-size:12px;color:var(--steel);margin-top:1px}
-  .exbtn .ex-ic{flex:0 0 40px;height:40px;border-radius:11px;display:grid;place-items:center;font:800 11px var(--mono);color:#fff}
-  .exbtn.main{border-color:var(--ink);box-shadow:var(--shadow)}
-  .exbtn:active{transform:scale(.99)}
   .opts{display:flex;flex-wrap:wrap;gap:6px}
-  .opts.yn .opt{flex:1}
-  .opt{border:1.5px solid var(--rule);background:#fff;border-radius:10px;padding:12px 14px;font-size:15px;font-weight:600;
-    cursor:pointer;color:var(--ink);min-height:48px;text-align:left}
-  .opt[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
-  button.act{width:100%;padding:15px;border:0;border-radius:12px;background:var(--ink);color:#fff;font-weight:700;
-    font-size:15px;cursor:pointer;font-family:var(--sans);letter-spacing:.01em}
-  button.act.go{background:var(--copper);color:#fff;box-shadow:0 2px 10px rgba(217,131,36,.3)}
-  button.act.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--rule);box-shadow:none}
-  button.act.danger{background:#fff;color:var(--live);border:1.5px solid var(--live);box-shadow:none}
-  button.shot{width:100%;padding:14px;border:1.5px dashed var(--blue);border-radius:12px;background:#F2F8FA;color:var(--blue);
-    font-weight:700;font-size:15px;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:9px}
-  button.shot:active{background:#E6F1F5}
-  .qagrp{margin:12px 0 0}
-  .qagrp h3{font-size:14px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
-  .qadot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
-  .qachip{display:inline-block;margin:0 6px 6px 0;padding:7px 11px;border-radius:999px;border:1.5px solid var(--rule);background:#fff;font:600 13px var(--sans);color:var(--ink);cursor:pointer;text-align:left}
-  .qachip.fix{border-color:#E7B4AE;background:#FDF3F2}
-  .qachip.chk{border-color:#EBCB9B;background:#FDF7EE}
-  button.act.loc{background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:none}
-  button.act.loc[aria-pressed="true"]{background:var(--ink)}
-  .youdot{width:22px;height:22px;box-sizing:border-box;border-radius:50%;background:#D98324;border:4px solid #fff;
-    box-shadow:0 0 0 2px rgba(20,54,66,.7),0 0 0 0 rgba(217,131,36,.6);animation:youpulse 2s infinite}
-  @keyframes youpulse{70%{box-shadow:0 0 0 2px rgba(20,54,66,.7),0 0 0 16px rgba(217,131,36,0)}100%{box-shadow:0 0 0 2px rgba(20,54,66,.7),0 0 0 0 rgba(217,131,36,0)}}
-  @media (prefers-reduced-motion:reduce){.youdot{animation:none}}
+  .opt{border:1.5px solid #cbd5e1;background:#fff;border-radius:10px;padding:11px 12px;font-size:14.5px;font-weight:600;cursor:pointer;color:#334155;min-height:46px;text-align:left}
+  .opt[aria-pressed="true"]{background:var(--ink2);color:#fff;border-color:var(--ink2)}
+  .opts.seg{display:flex;gap:0;border:1.5px solid #cbd5e1;border-radius:10px;overflow:hidden;background:#fff}
+  .opts.seg .opt{flex:1;border:0;border-radius:0;border-left:1.5px solid #cbd5e1;text-align:center;min-height:46px;padding:10px 6px}
+  .opts.seg .opt:first-child{border-left:0}
+  button.shot{width:100%;padding:14px;border:2px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#334155;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px}
+  .pvimg{width:100%;max-height:260px;object-fit:cover;display:block;margin-top:8px;border-radius:12px;border:1px solid var(--line)}
+  details.sub>summary{cursor:pointer;font-weight:700;font-size:13px;padding:6px 2px;list-style:none;color:#334155}
+  details.sub>summary::-webkit-details-marker{display:none}
+  details.sub>summary::before{content:"\25B8  ";color:var(--muted)}
+  details.sub[open]>summary::before{content:"\25BE  "}
+  #setup>summary{padding:12px 14px;font-weight:800;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:#334155;cursor:pointer;list-style:none;background:#f8fafc}
+  #setup>summary::-webkit-details-marker{display:none}
+  /* ---------- buttons ---------- */
+  button.act{width:100%;padding:13px 14px;border:0;border-radius:11px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  button.act.go{background:var(--accent)}
+  button.act.dark{background:var(--ink2)}
+  button.act.warn{background:var(--fair)}
+  button.act.ghost{background:#fff;color:#334155;border:1.5px solid #cbd5e1}
+  button.act.danger{background:#fff;color:var(--poor);border:1.5px solid #fecaca}
+  button.act:disabled{opacity:.55}
+  button.act.loc{background:var(--ink2)}
   .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(238,241,239,.94);backdrop-filter:blur(8px);border-top:1px solid var(--rule);padding:10px 14px 14px;z-index:25}
-  .savebar .in{max-width:820px;margin:0 auto}
-  .rec{background:#fff;border:1px solid var(--rule);border-left:5px solid var(--c,var(--steel));border-radius:12px;padding:12px 14px;margin-bottom:9px;box-shadow:var(--shadow)}
-  .rec .id{font-weight:700;font-size:16px}
-  .rec .meta{font-family:var(--mono);font-size:11px;color:var(--steel);margin-top:4px;word-break:break-all}
-  .rec .tag{font-size:12px;color:var(--steel);font-weight:600}
+  .exgrid{display:grid;gap:10px}
+  .exbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:12px;background:#fff;color:var(--ink)}
+  .exbtn b{display:block;font-size:15px}.exbtn small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+  .exbtn .ex-ic{flex:0 0 40px;height:40px;border-radius:11px;display:grid;place-items:center;font:800 11px var(--mono);color:#fff}
+  .exbtn.main{background:var(--accent);border-color:var(--accent);color:#fff}.exbtn.main small{color:#e0f2fe}
+  /* ---------- checks, lists ---------- */
+  .qagrp{margin:12px 0 0}.qagrp h3{font-size:14px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+  .qadot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+  .qachip{display:inline-block;margin:0 6px 6px 0;padding:7px 11px;border-radius:99px;border:1.5px solid var(--line);background:#fff;font:600 13px var(--sans);color:var(--ink);cursor:pointer}
+  .qachip.fix{border-color:#fecaca;background:#fef2f2}.qachip.chk{border-color:#fde68a;background:#fffbeb}
+  .youdot{width:20px;height:20px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 0 0 rgba(37,99,235,.5);animation:youpulse 2s infinite}
+  @keyframes youpulse{70%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 0 14px rgba(37,99,235,0)}100%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 0 0 rgba(37,99,235,0)}}
+  @media (prefers-reduced-motion:reduce){.youdot,.gpschip.wait .dot{animation:none}}
+  .rec{background:#fff;border:1px solid var(--line);border-left:5px solid var(--c,var(--muted));border-radius:12px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .rec .id{font-weight:800;font-size:16px}.rec .tag{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .rec .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px;word-break:break-all}
+  .rec .thumb{width:84px;height:64px;object-fit:cover;border-radius:8px;margin-top:8px;background:#e2e8f0;display:block}
   .rec .tools{display:flex;gap:6px;margin-top:10px}
-  .rec .tools button{background:#fff;border:1.5px solid var(--rule);border-radius:9px;padding:9px 14px;font-size:13px;
-    font-weight:600;cursor:pointer;color:var(--ink)}
-  .note{font-size:13px;color:var(--steel);line-height:1.45}
-  .flag{border-radius:11px;padding:11px 13px;font-size:13px;margin-bottom:8px;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--earth)}
-  .flag.warnlvl{border-left-color:var(--copper)}
-  .flag .ref{display:block;margin-top:4px;font-size:11px;color:var(--steel)}
+  .rec .tools button{border:0;background:#f1f5f9;border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:700;color:#334155}
+  .rec .tools button[data-del]{color:var(--poor);background:#fef2f2}
+  .note{font-size:13px;color:var(--muted);line-height:1.45}
+  .flag{border-radius:10px;padding:9px 11px;font-size:12.5px;margin-bottom:8px;background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+  .flag.warnlvl{background:#fffbeb;border-color:#fde68a;color:#78350f}
+  .flag.bad{background:#fef2f2;border-color:#fecaca;color:#991b1b}
   table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{text-align:left;padding:8px;border-bottom:1px solid var(--rule);vertical-align:top}
-  th{font-size:12px;color:var(--steel);font-weight:600}
-  tr.tot td{font-weight:700;border-top:2px solid var(--ink)}
-  tr.grp td{background:#EEF4F1;font-weight:700;font-size:13px;color:var(--ink)}
+  th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  tr.tot td{font-weight:800;border-top:2px solid var(--ink)}
+  tr.grp td{background:#f8fafc;font-weight:800;font-size:12px;color:#334155}
   td.n{text-align:right;font-family:var(--mono);white-space:nowrap}
-  .cnt{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--rule)}
-  .cnt b{font-size:17px;font-weight:700}
-  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:94px;background:var(--ink);color:#fff;padding:13px 18px;
-    border-radius:12px;font-size:14px;font-weight:500;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s;max-width:88%;text-align:center;box-shadow:0 8px 28px rgba(20,54,66,.28)}
+  .cnt{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.cnt b{font-size:17px}
+  .about{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;border-radius:12px;padding:14px}
+  .about .mono{width:46px;height:46px;border-radius:50%;background:#0ea5e9;display:grid;place-items:center;font-weight:800;font-size:17px;flex:0 0 auto}
+  .about b{display:block;font-size:15px}.about span{font-size:12.5px;color:#cbd5e1}
+  /* ---------- save bar, toast, modals ---------- */
+  .savebar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:8px 14px calc(10px + var(--safe-b))}
+  .savebar .in{max-width:780px;margin:0 auto}
+  #savestate{font:700 11px var(--mono);text-align:center;margin-bottom:6px}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + var(--safe-b));background:#1e293b;color:#fff;padding:10px 16px;border-radius:99px;font-size:13.5px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s;max-width:92vw;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.22)}
   .toast.on{opacity:1}
-  #gate{position:fixed;inset:0;background:var(--paper);z-index:2000;overflow:auto;padding:0 16px 40px}
+  .modal{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.6);display:grid;place-items:center;padding:20px}
+  .modal .box{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
+  .modal h3{margin:0 0 6px;font-size:18px}.modal p{margin:0 0 14px;color:var(--muted);font-size:13.5px}
+  .scanbox{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:4/3;margin-bottom:12px}
+  .scanbox video{width:100%;height:100%;object-fit:cover;display:block}
+  .scanbox .frame{position:absolute;left:10%;right:10%;top:30%;bottom:30%;border:3px solid #22c55e;border-radius:10px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+  .credit{max-width:780px;margin:0 auto;padding:4px 14px calc(110px + var(--safe-b));text-align:center;font-size:11.5px;color:var(--muted)}
+  .credit b{color:#334155}
+  .leaflet-popup-content{font-size:13px;line-height:1.5}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
-<!-- ================= sign in ================= -->
-<div id="gate">
-  <div class="stripe"><i></i><i></i><i></i><i></i></div>
-  <div style="max-width:520px;margin:0 auto">
-    <div style="display:flex;align-items:center;gap:12px;margin:34px 2px 4px">
-      <svg class="mark" style="width:44px;height:44px" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#143642"/><path d="M20 9 V31" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M11 15 H29" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M13 21 H27" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/><circle cx="20" cy="33.5" r="3.1" fill="#D98324"/></svg>
-      <div style="font-weight:800;font-size:28px;letter-spacing:-.02em;color:var(--ink);line-height:1.05">WK LV <span style="color:var(--copper)">As-Built</span><div style="font-size:13px;font-weight:700;color:var(--steel);letter-spacing:.06em">NYANZA · LV NETWORK</div></div>
+<!-- ================= agent ================= -->
+<div id="gate" class="modal">
+  <div class="box">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <img src="icon-192.png" alt="" style="width:48px;height:48px;border-radius:12px">
+      <div><div style="font-weight:800;font-size:20px;line-height:1.1">WK LV As-Built</div><div style="font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em">NYANZA · LV NETWORK AS-BUILT</div></div>
     </div>
-    <p class="note" style="margin:0 0 20px 2px;font-size:14px">Transformer, poles, spans and customers of the Nyanza EPC LV network, surveyed on site. Created by <b>Ir Wilbert KIRARA</b>, Expert Surveyor in Electrical Power Lines.</p>
-    <div class="card">
-      <h2 style="margin-top:0">Who's surveying today?</h2>
-      <p class="note" style="margin-top:0">Filled once on this phone. Your name rides along with every point, so the supervisor knows who recorded what.</p>
-      <div class="field req"><label for="g_name">Full name</label><input id="g_name" placeholder="e.g. Jean Bosco NIYONZIMA"></div>
-      <div class="field"><label for="g_tel">Phone <em>optional</em></label><input id="g_tel" inputmode="numeric"></div>
-      <button class="act go" id="g_ok">Start surveying</button>
-    </div>
+    <h3>Agent name</h3>
+    <p>Enter your first and last name. It is recorded on every point and in the reports.</p>
+    <div class="field req"><label for="g_name">Full name</label><input id="g_name" placeholder="e.g. Jean Bosco NIYONZIMA" autocapitalize="words"></div>
+    <div class="field"><label for="g_tel">Phone <em>optional</em></label><input id="g_tel" inputmode="tel" placeholder="07XXXXXXXX"></div>
+    <button class="act" id="g_ok">Continue</button>
+    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:12px">WK LV As-Built — created by <b>Ir Wilbert KIRARA</b>,<br>Expert Surveyor in Electrical Power Lines</div>
   </div>
 </div>
 
-<div class="stripe"><i></i><i></i><i></i><i></i></div>
 <header>
-  <div class="head-in">
-    <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#1C7293"/><path d="M20 9 V31" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M11 15 H29" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M13 21 H27" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/><circle cx="20" cy="33.5" r="3.1" fill="#D98324"/></svg>
-    <div>
-      <div class="brand">WK LV <span>As-Built</span></div>
-      <div class="sub" id="zonelbl">Nyanza · choose a transformer</div>
-    </div>
-    <div class="pill" id="agentpill">SURV</div>
+  <div class="hrow">
+    <img class="logo" src="icon-192.png" alt="">
+    <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by">by Ir Wilbert KIRARA</small></div>
+    <span class="hsp"></span>
+    <button class="sync off" id="syncChip" onclick="syncNow(true)">☁ off</button>
+    <button class="agent" id="agentpill">👤 —</button>
   </div>
-  <div style="max-width:820px;margin:0 auto;padding:0 14px 8px;font-family:var(--mono);font-size:11px;color:#9FB0BA" id="progress"></div>
+  <div class="gpsbar">
+    <div class="gpschip wait" id="gpsChip">
+      <span class="dot"></span><span class="big" id="gpsBig">—</span>
+      <span class="lbl" id="gpsLbl">Starting GPS…</span><span class="src" id="gpsSrc">GPS</span>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
   <nav role="tablist">
     <button role="tab" aria-selected="true" data-tab="capture">Capture</button>
-    <button role="tab" aria-selected="false" data-tab="list">List<b id="n_all">0</b></button>
-    <button role="tab" aria-selected="false" data-tab="distance">Distances<b id="n_km">0</b></button>
+    <button role="tab" aria-selected="false" data-tab="list">Records<b id="n_all">0</b></button>
+    <button role="tab" aria-selected="false" data-tab="distance">Km<b id="n_km">0</b></button>
     <button role="tab" aria-selected="false" data-tab="summary">Summary</button>
-    <button role="tab" aria-selected="false" data-tab="send">Send<b id="n_send">0</b></button>
+    <button role="tab" aria-selected="false" data-tab="send">Export<b id="n_send">0</b></button>
     <button role="tab" aria-selected="false" data-tab="guide">Guide</button>
   </nav>
 </header>
 
-<div class="wrap">
-
-  <!-- CAPTURE -->
-  <div id="storagewarn" style="display:none;background:var(--live);color:#fff;padding:12px 14px;font-size:13px">
-    <b>This phone is not saving to disk.</b> Your points are held in memory only and will be lost if the app closes.
-    Go to the Send tab and create your file now, then tell the supervisor. Freeing phone storage or reinstalling the app usually fixes it.
+<div id="iosHint" class="hidden" style="max-width:780px;margin:10px auto 0;padding:0 14px">
+  <div style="background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:12px;padding:10px 12px;font-size:13px;display:flex;gap:10px;align-items:center">
+    <span>Install: tap <b>Share</b> ⬆︎ then <b>Add to Home Screen</b>.</span>
+    <button onclick="document.getElementById('iosHint').classList.add('hidden')" style="margin-left:auto;border:0;background:none;color:#1e40af;font-size:18px">✕</button>
   </div>
-  <section id="tab-capture">
-    <!-- MAP at the top -->
-    <div class="card" style="padding:8px">
-      <div class="btn-row" style="margin-bottom:8px;grid-template-columns:1fr 1fr 1.35fr">
-        <button class="act ghost" id="mapSat" style="padding:9px">Satellite</button>
-        <button class="act ghost" id="mapDiagram" style="padding:9px">Diagram</button>
-        <button class="act loc" id="mapMe" style="padding:9px" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>My position</span></button>
-      </div>
-      <svg id="minimap" viewBox="0 0 320 240" style="width:100%;height:240px;display:block;background:#F4F6F6;border-radius:2px" aria-label="Collected points"></svg>
-      <div id="satmap" style="display:none;width:100%;height:340px;border-radius:2px;overflow:hidden"></div>
-      <div id="satnote" class="note" style="display:none;margin-top:6px"></div>
-      <div class="note" style="margin:8px 2px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <span><b style="color:var(--steel)">●</b> pole</span>
-        <span><b style="color:var(--earth)">●</b> customer</span>
-        <span><b style="color:var(--live)">●</b> transformer</span>
-        <span><b style="color:var(--signal)">●</b> you</span>
-        <span id="maplbl" class="note" style="margin:0"></span>
-      </div>
-      <p class="note" style="margin:4px 2px 0">On satellite, tap a point to edit it, or drag it where it belongs if the GPS was off.</p>
-      <p class="note" id="dlbar" style="margin:6px 2px 0;display:none;color:var(--blue);font-weight:700"></p>
-      <details class="sub" style="margin-top:4px">
-        <summary>Offline map <span id="tilestat" class="note" style="font-weight:400"></span></summary>
-        <div class="btn-row" style="margin-top:4px">
-          <button class="act ghost" id="btn_dlmap" style="padding:9px">⬇ Save map offline</button>
-          <button class="act ghost" id="btn_clrmap" style="padding:9px">Clear offline map</button>
-        </div>
-        <p class="note" style="margin:6px 2px 0">Save it before going to the field, with Wi-Fi or mobile data, so the satellite view still works with no signal. It saves only your work area.</p>
-      </details>
-    </div>
+</div>
 
-    <!-- SETUP (collapses once a transformer is set) -->
-    <details id="setup" class="card" style="padding:0">
-      <summary style="padding:14px;font-weight:800;font-size:13px;letter-spacing:.04em;cursor:pointer">Setup <span id="setuplbl" class="note" style="font-weight:400"></span></summary>
-      <div style="padding:0 14px 14px">
+<div class="wrap">
+  <div id="storagewarn" class="flag bad" style="display:none">
+    <b>This phone is not saving to disk.</b> Your points are held in memory only and will be lost if the app closes.
+    Open Export and create your send file now, then tell the supervisor.
+  </div>
+
+  <!-- ================= CAPTURE ================= -->
+  <section id="tab-capture">
+    <details id="setup" class="card flush" open>
+      <summary>⚙ Transformer zone <span id="setuplbl" style="text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)"></span></summary>
+      <div class="pad">
         <div class="field"><label for="c_sectorsel">Sector <em>Nyanza district</em></label><select id="c_sectorsel"></select></div>
         <div class="field"><label for="c_trf">Transformer <em>with a customer list first</em></label><select id="c_trf"></select></div>
         <div class="grid2">
-          <div class="field"><label for="c_drop">Drop allowance m</label><input id="c_drop" inputmode="decimal" value="6"></div>
+          <div class="field"><label for="c_drop">Drop allowance (m)</label><input id="c_drop" inputmode="decimal" value="6"></div>
           <div class="field"><label>District</label><input value="Nyanza" readonly></div>
         </div>
         <p class="note" style="margin:0 0 8px">Sector, cell and village of every point come from its GPS position (official NISR village boundaries). The two boxes below are used only for a point outside the village map.</p>
@@ -260,35 +273,65 @@
           <div class="field"><label for="c_cell">Cell <em>fallback</em></label><select id="c_cell"></select></div>
           <div class="field"><label for="c_village">Village <em>fallback</em></label><select id="c_village"></select></div>
         </div>
-        <p class="note" id="rosterinfo" style="margin:8px 0 0"></p>
+        <p class="note" id="rosterinfo" style="margin:4px 0 0"></p>
       </div>
     </details>
 
-    <!-- WHAT TO RECORD: transformer, then poles, then customers -->
     <div class="chips" id="chips"></div>
 
-    <!-- GPS strip -->
-    <div class="card" style="padding:10px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="acc none" id="f_acc" style="margin:0;font-size:14px;padding:8px 12px">GPS off</span>
-        <div style="flex:1;min-width:0;font-family:var(--mono);font-size:11px;color:var(--steel);line-height:1.3">
-          <div>X <span id="f_x">—</span> &nbsp; Y <span id="f_y">—</span></div>
-          <div id="f_ll" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">no position</div>
+    <div class="card flush">
+      <div class="ch">📍 Position — TM Rwanda <span class="req">required</span></div>
+      <div class="pad">
+        <div class="cap">
+          <div class="ring" id="ring"><div><b id="ringVal">—</b><small id="ringSub">not captured</small></div></div>
+          <div class="capinfo">
+            <div class="st" id="capState">No point yet</div>
+            <div class="mono" id="capXY">E —  ·  N —</div>
+            <div id="capMeta" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+          </div>
         </div>
-        <button class="act go" id="btn_gps" style="width:auto;padding:10px 14px;flex:0 0 auto">Start GPS</button>
+        <div class="row2">
+          <button class="act" id="capBtn" onclick="startCapture()">🛰 Capture position</button>
+          <button class="act warn hidden" id="useBtn" onclick="finishCapture(true)" style="flex:0 0 auto;width:auto">Use now</button>
+        </div>
+        <div id="gpsadm"></div>
+        <div id="neartx"></div>
+        <div id="editpos" class="flag warnlvl" style="display:none;margin:10px 0 0">Editing a saved point. Re-capture to move it, or drag it on the satellite map, then Update.</div>
+        <div id="gpsdiag" class="note"></div>
+        <div class="tip">Stand at the pole / meter in open sky and hold the phone still. The app averages satellite fixes (up to 60 s) and ignores network positions. CRS: ITRF2005 / TM Rwanda (CM 30°E, k0 0.9999, FE 500 000, FN 5 000 000).</div>
       </div>
-      <div id="editpos" class="note" style="display:none;margin-top:8px;color:var(--live)">Editing this point. To move it, Start GPS at the right spot, or drag it on the satellite map, then Update point.</div>
-      <div id="gpsadm" class="note" style="margin-top:8px;font-size:12.5px"></div>
-      <div id="neartx"></div>
-      <div id="gpsdiag" class="note" style="margin-top:8px"></div>
+      <div class="mapbar">
+        <button id="mapSat">Satellite</button>
+        <button id="mapDiagram">Diagram</button>
+        <button id="mapMe" aria-pressed="false">◎ <span>My position</span></button>
+        <span class="netpill" id="netPill">…</span>
+      </div>
+      <svg id="minimap" viewBox="0 0 320 240" style="width:100%;height:240px;display:block;background:#f8fafc" aria-label="Collected points"></svg>
+      <div id="satmap" style="display:none;width:100%;height:340px"></div>
+      <div id="satnote" class="note" style="display:none;padding:6px 12px"></div>
+      <div class="legend">
+        <span><i style="background:#5D6B75"></i>pole</span><span><i style="background:#12795B"></i>customer</span>
+        <span><i style="background:#D93A2B"></i>transformer</span><span><i style="background:#2563eb"></i>you</span>
+        <span id="maplbl"></span>
+      </div>
+      <div class="pad" style="padding-top:6px">
+        <p class="note" style="margin:0">On satellite: tap a point to edit it, drag it if the GPS was off. Red squares are the design transformers.</p>
+        <p class="note" id="dlbar" style="margin:6px 0 0;display:none;color:var(--accent);font-weight:700"></p>
+        <details class="sub" style="margin-top:4px">
+          <summary>Offline map <span id="tilestat" class="note" style="font-weight:400"></span></summary>
+          <div class="btn-row" style="margin-top:6px">
+            <button class="act ghost" id="btn_dlmap" style="padding:9px">⬇ Save map offline</button>
+            <button class="act ghost" id="btn_clrmap" style="padding:9px">Clear offline map</button>
+          </div>
+          <p class="note" style="margin:6px 0 0">Do it before going to the field, with Wi-Fi or mobile data, so the satellite view still works with no signal.</p>
+        </details>
+      </div>
     </div>
 
-
-    <!-- FORM: everything in one sequence -->
     <div class="card formcard" id="formcard">
       <div id="custpicker"></div>
       <div id="liveflags"></div>
-      <label style="display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink);font-weight:600;margin-bottom:10px">
         <input type="checkbox" id="repeatchk" checked style="width:20px;height:20px;flex:0 0 auto">
         Repeat the same values as the last point
       </label>
@@ -299,19 +342,21 @@
       <span id="unlayer" style="display:none"></span>
       <span id="formhead" style="display:none"></span>
     </div>
+    <input type="file" id="idPhotoIn" accept="image/*" capture="environment" class="hidden" onchange="onIdPhoto(this)">
   </section>
 
-  <!-- LIST -->
+  <!-- ================= RECORDS ================= -->
   <section id="tab-list" hidden>
-    <h2>Points collected</h2>
     <div class="card">
-      <div class="field"><label for="r_filter">Sheet</label><select id="r_filter"></select></div>
-      <div class="field"><label for="r_search">Search</label><input id="r_search" placeholder="Pole, house, meter, name"></div>
+      <div class="grid2">
+        <div class="field" style="margin:0"><label for="r_filter">Type</label><select id="r_filter"></select></div>
+        <div class="field" style="margin:0"><label for="r_search">Search</label><input id="r_search" placeholder="Pole, house, meter, name"></div>
+      </div>
     </div>
     <div id="reclist"></div>
   </section>
 
-  <!-- CHECKS -->
+  <!-- ================= DISTANCES ================= -->
   <section id="tab-distance" hidden>
     <h2>Distances collected</h2>
     <div class="card" id="distkpi"></div>
@@ -319,67 +364,107 @@
     <div class="card" id="distcond"></div>
     <h2>Service cable by size</h2>
     <div class="card" id="distsvc"></div>
-    <p class="note">Line length is the sum of the spans between your poles, walked in order. Service cable is the sum of every customer drop. Both come from the GPS coordinates, so nothing is typed and nothing is left empty.</p>
+    <p class="note">Line length = sum of the spans between poles. Service cable = sum of every customer drop. Both come from the GPS coordinates.</p>
   </section>
 
-  <!-- SUMMARY -->
+  <!-- ================= SUMMARY ================= -->
   <section id="tab-summary" hidden>
     <h2>Transformer surveying summary</h2>
     <div class="card"><div id="summary"></div></div>
-    <p class="note">Counted from what you have collected so far. Service cable totals use the real length. This is the take-off, so you can check quantities before leaving the zone.</p>
+    <p class="note">Counted from what is on this phone. Service cable totals use the real length.</p>
   </section>
 
-  <!-- SEND -->
+  <!-- ================= EXPORT ================= -->
   <section id="tab-send" hidden>
-    <h2>What you have collected</h2>
     <div class="card" id="counts"></div>
     <div id="backupbanner"></div>
-    <h2>Check before sending</h2>
-    <div class="card" id="qacard"></div>
-    <h2>Send to the supervisor</h2>
-    <div class="card">
-      <p class="note" style="margin-top:0">Tap the button, then share the file by WhatsApp, e-mail or USB. One file holds all of your work.</p>
-      <button class="act go" id="ex_json">Create my send file</button>
-      <p class="note" id="lastsend" style="margin-bottom:0"></p>
+    <div class="card flush">
+      <div class="ch">✔ Check before sending</div>
+      <div class="pad" id="qacard"></div>
     </div>
-    <h2>Maps and GIS</h2>
-    <div class="card">
-      <div class="exgrid">
-        <button class="exbtn main" id="ex_all"><span class="ex-ic" style="background:var(--ink)">ALL</span><span><b>Complete package</b><small>Google Earth + shapefiles + CSV + photos, in one ZIP</small></span></button>
-        <button class="exbtn" id="ex_kml"><span class="ex-ic" style="background:#1C7293">KMZ</span><span><b>Google Earth</b><small>Every point with its photo and details</small></span></button>
-        <button class="exbtn" id="ex_shp"><span class="ex-ic" style="background:#2F8F6B">SHP</span><span><b>Shapefiles</b><small>Transformer, poles, LV network, customers, service cables · TM Rwanda</small></span></button>
-        <button class="exbtn" id="ex_csvzip"><span class="ex-ic" style="background:#D98324">CSV</span><span><b>CSV tables</b><small>One table per layer, in one ZIP</small></span></button>
+    <div class="card flush">
+      <div class="ch">☁ Automatic sync (Google Drive)</div>
+      <div class="pad exgrid">
+        <div class="note">When the phone has network, every saved point and its stamped photo go to the project Google Sheet (one tab per layer) and Drive folder. Points stay on the phone as well.</div>
+        <div id="syncInfo" style="font-size:13px;font-weight:600"></div>
+        <button class="act" onclick="syncNow(true)">⟳ Sync now</button>
+        <details class="sub"><summary>Server settings (supervisor)</summary>
+          <div class="field" style="margin-top:8px"><label for="syncUrlIn">Sync server URL (Apps Script /exec)</label><input id="syncUrlIn" placeholder="https://script.google.com/macros/s/…/exec"></div>
+          <button class="act ghost" onclick="saveSyncUrl()">Test &amp; save</button>
+        </details>
       </div>
-      <p class="note" id="exstat" style="margin:10px 0 0">Coordinates in the shapefiles are TM Rwanda (CM 30°E). Photos open from the Photo field.</p>
     </div>
-    <div id="unbtns" style="display:none"></div>
-    <div class="card">
-      <details class="sub">
-        <summary>Nyanza customer list and single CSV files</summary>
-        <div id="csvbtns" style="margin-top:8px"></div>
-        <p class="note" style="margin-bottom:0">Same columns as the Excel workbook. The supervisor does not need them, the send file is enough.</p>
-      </details>
+    <div class="card flush">
+      <div class="ch">Export</div>
+      <div class="pad exgrid">
+        <button class="exbtn main" id="ex_all"><span class="ex-ic" style="background:rgba(255,255,255,.18)">ZIP</span><span><b>Complete package</b><small>Google Earth + shapefiles + CSV + Excel + stamped photos + backup</small></span></button>
+        <button class="exbtn" id="ex_json"><span class="ex-ic" style="background:#0f172a">SEND</span><span><b>Send file for the supervisor</b><small>One small file with all your points (.wklv.json) — WhatsApp it every evening</small></span></button>
+        <button class="exbtn" id="ex_xlsx" onclick="exportXLSXOnly()"><span class="ex-ic" style="background:#059669">XLS</span><span><b>Excel report — customers</b><small>RESERVE format, Nyanza template</small></span></button>
+        <button class="exbtn" id="ex_kml"><span class="ex-ic" style="background:#0369a1">KMZ</span><span><b>Google Earth</b><small>Every point with its stamped photo and details</small></span></button>
+        <button class="exbtn" id="ex_shp"><span class="ex-ic" style="background:#7c3aed">SHP</span><span><b>Shapefiles</b><small>Transformer, poles, LV network, customers, service cables · TM Rwanda</small></span></button>
+        <button class="exbtn" id="ex_csvzip"><span class="ex-ic" style="background:#d97706">CSV</span><span><b>CSV tables</b><small>One table per layer, in one ZIP</small></span></button>
+        <p class="note" id="exstat" style="margin:0"></p>
+        <p class="note" id="lastsend" style="margin:0"></p>
+        <details class="sub"><summary>Nyanza customer list and single CSV files</summary><div id="csvbtns" style="margin-top:8px"></div></details>
+        <div id="unbtns" style="display:none"></div>
+      </div>
     </div>
-    <div class="card">
-      <p class="note" style="margin-top:0">Only after the supervisor confirms they have your file.</p>
-      <button class="act danger" id="ex_clear">Erase all my data</button>
+    <div class="card flush">
+      <div class="ch">🛟 Backup &amp; restore</div>
+      <div class="pad exgrid">
+        <div class="note">Points and photos are stored <b>on this phone</b>. The complete package (or the send file) restores them on any phone.</div>
+        <button class="act ghost" onclick="document.getElementById('restoreIn').click()">⤒ Restore from package (ZIP) or send file</button>
+        <input type="file" id="restoreIn" accept=".zip,.json,application/zip,application/json" class="hidden" onchange="restoreFile(this)">
+        <div id="storageInfo" class="note"></div>
+        <button class="act danger" id="ex_clear">Erase all my data (only after the supervisor confirms)</button>
+      </div>
+    </div>
+    <div class="card flush">
+      <div class="ch">⚙ App</div>
+      <div class="pad exgrid">
+        <button class="act ghost hidden" id="installBtn" onclick="doInstall()">⤓ Install on this phone</button>
+        <button class="act ghost" onclick="prepareOCR(true)">🪪 Prepare the ID-card reader for offline use</button>
+        <div class="about"><div class="mono">WK</div><div><b>Ir Wilbert KIRARA</b><span>Expert Surveyor in Electrical Power Lines<br>Creator of WK LV As-Built and WK Connect Survey</span></div></div>
+        <div class="note" id="appver"></div>
+      </div>
     </div>
   </section>
 
-  <!-- GUIDE -->
+  <!-- ================= GUIDE ================= -->
   <section id="tab-guide" hidden>
     <h2>Field reference</h2>
     <div id="refbody"></div>
   </section>
 </div>
+<div class="credit">WK LV As-Built · Nyanza · created by <b>Ir Wilbert KIRARA</b> · Expert Surveyor in Electrical Power Lines</div>
 
-<div class="savebar" id="savebar"><div class="in"><div id="savestate" style="font-family:var(--mono);font-size:11px;font-weight:700;text-align:center;margin-bottom:6px;color:var(--earth)">\u2713 saved on phone</div><button class="act go" id="btn_save">Save point</button></div></div>
+<div class="savebar" id="savebar"><div class="in"><div id="savestate" style="color:var(--good)">✓ saved on phone</div><button class="act" id="btn_save">💾 Save point</button></div></div>
 <div class="toast" id="toast"></div>
-<p class="note" style="text-align:center;margin:0 auto;padding:6px 14px 120px;max-width:820px;font-size:11.5px">WK LV As-Built · Nyanza · created by <b>Ir Wilbert KIRARA</b>, Expert Surveyor in Electrical Power Lines · © 2026 all rights reserved</p>
+
+<div class="modal hidden" id="idModal">
+  <div class="box">
+    <h3>ID card — check and confirm</h3>
+    <p id="idMsg">Correct anything that was read wrongly.</p>
+    <div class="field"><label for="idLast">Last name</label><input id="idLast" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()"></div>
+    <div class="field"><label for="idFirst">First name</label><input id="idFirst"></div>
+    <div class="field"><label for="idNum">ID number (16 digits)</label><input id="idNum" inputmode="numeric" maxlength="16"></div>
+    <div class="row2"><button class="act ghost" onclick="document.getElementById('idModal').classList.add('hidden')">Cancel</button><button class="act" onclick="applyId()">✓ Fill form</button></div>
+  </div>
+</div>
+<div class="modal hidden" id="scanModal">
+  <div class="box">
+    <h3 id="scanTitle">Scan</h3>
+    <div class="scanbox"><video id="scanVideo" playsinline muted></video><div class="frame"></div></div>
+    <p style="margin:0 0 12px">Hold the barcode / QR code inside the green frame.</p>
+    <button class="act ghost" onclick="closeScan()">Cancel — type it instead</button>
+  </div>
+</div>
 <script src="leaflet/leaflet.js"></script>
 <script src="nyanza-transformers.js"></script>
 <script src="nyanza-villages.js"></script>
 <script src="nyanza-customers.js"></script>
+<script src="exceljs.min.js"></script>
+<script src="jszip.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

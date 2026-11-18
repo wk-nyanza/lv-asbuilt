@@ -13,6 +13,7 @@ FILES (keep them together, all of them)
 - nyanza-customers.js .. Phase 1 customer lists, 1,886 customers on 22 transformers
 - nyanza-transformers.js 141 transformers of the Nyanza LV design (TM Rwanda)
 - nyanza-villages.js ... official NISR village boundaries, Nyanza + 2 km
+- exceljs, jszip, zxing, ocr/ (ID reader), nyanza-template.xlsx, apps-script/Code.gs (sync server)
 - leaflet/, sw.js, manifest.webmanifest, icons
 
 WHAT IT RECORDS
@@ -24,6 +25,22 @@ WHAT IT RECORDS
   = GPS distance pole -> house + drop allowance (Setup, default 6 m).
 - Pole number and cable length written in the EUCL list are kept beside the field
   values (Pole_in_list, Length_in_list) and differences are flagged in Send > Check.
+
+VERSION 2 (WK Connect method, design and tools)
+- WK Connect design: dark header, live GPS bar (SAT / NET + accuracy) on every screen.
+- Every point is CAPTURED like in WK Connect: satellite fixes only, averaged, outliers removed,
+  stops at ±3 m after 15 fixes, after 60 s, or on "Use now". The point is cleared after each save,
+  so two poles can never get the same coordinates by mistake; a point < 3 m from another point of
+  the same kind asks for confirmation.
+- Photos kept at full size (1600 px) and stamped on export / sync with number, name or meter,
+  X/Y, precision, village, date and agent.
+- Automatic sync to a Google Sheet (tabs Transformers / Poles / Customers) + Drive photo folder
+  per transformer (apps-script/Code.gs). Header chip: ☁ ✓ synced · ☁ n waiting · ☁ ! error.
+- Excel report of the customers in the RESERVE format (Nyanza template).
+- Complete package now also contains backup.json + original photos: "Restore" puts everything
+  back on any phone (ZIP) — a send file (.wklv.json) can be restored too (without photos).
+- Barcode / QR scan for meter number, ID and UPI; ID-card reader (offline OCR) for customers
+  not on the list; customer last names forced to CAPITALS.
 
 NYANZA-SPECIFIC
 - Setup: Sector -> Transformer. Transformers with a customer list are listed first.
@@ -57,9 +74,8 @@ CUSTOMER LISTS -> TRANSFORMERS (check these)
   -> kept as "TRF Matara" (Kibilizi), no design position.
 - To refresh the lists: regenerate nyanza-customers.js and bump CACHE in sw.js.
 
-PUT ONLINE (GitHub Pages, like WK Connect Survey)
-1. New repository, upload ALL files (with .nojekyll). Settings > Pages > main / root.
-2. Bump CACHE in sw.js on every release so phones load the new version.
+ONLINE: https://wk-nyanza.github.io/lv-asbuilt/  (tracker: .../tracker.html)
+Repository wk-nyanza/lv-asbuilt (GitHub Pages, main / root). Bump CACHE in sw.js on every release.
 WARNING: on a public repository, nyanza-customers.js (names, national IDs, phones) can be
 downloaded by anyone who finds the address.
 WARNING: WK Connect Survey and Voltline on the same github.io address delete the other apps'
