@@ -10,7 +10,7 @@ FILES (keep them together, all of them)
 - index.html ........... the field app (phones)
 - tracker.html ......... supervisor console (computer): merge send files, issues, totals
 - app.js ............... app logic
-- nyanza-customers.js .. Phase 1 customer lists, 1,886 customers on 22 transformers
+- nyanza-customers.js .. Phase 1 customer lists, 1,886 customers on the 23 Phase 1 transformers
 - nyanza-transformers.js 141 transformers of the Nyanza LV design (TM Rwanda)
 - nyanza-villages.js ... official NISR village boundaries, Nyanza + 2 km
 - exceljs, jszip, zxing, ocr/ (ID reader), nyanza-template.xlsx, apps-script/Code.gs (sync server)
@@ -66,8 +66,8 @@ EXPORTS (Send tab)
 CUSTOMER LISTS -> TRANSFORMERS (check these)
 - 29 workbooks read; Kamabuye and Kamabuye(Muyenzi) are the same list (duplicates removed);
   list 1 + list 2 merged per transformer; duplicates by meter number removed.
-- "Customer List Birembo Village" header says TRANSFORMER MWANABERI -> put on EX TRF MWANABERI
-  (EX TRF BIREMBO also exists in the design: move it if Birembo is fed from there).
+- Birembo list -> EX TRF BIREMBO (its own transformer; the design point lies in Birembo village).
+- The app shows only the 23 Phase 1 transformers (those with a customer list).
 - KABEZA (Mututu cell, Kibilizi): the design EX_TRF_KABEZA lies in Kabeza village of
   Cyabakamyi sector, another village -> kept as its own transformer "TRF Kabeza (Mututu)".
 - MATARA list has no transformer name and none of the design transformers is called Matara
