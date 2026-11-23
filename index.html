@@ -216,6 +216,17 @@
   #mapsheet label{margin-top:10px}
   .ptlbl{background:rgba(15,23,42,.82)!important;color:#fff!important;border:0!important;font:700 11px var(--sans)!important;padding:1px 5px!important;border-radius:5px!important;box-shadow:none!important}
   .ptlbl::before{display:none!important}
+  /* ---------- transformer quick switch ---------- */
+  .trfsw:empty{display:none}
+  .trfsw{margin:0 0 10px}
+  .trfsw-h{font:700 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 2px 6px}
+  .trfsw-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  .trfsw-b{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 12px;font:600 12.5px var(--sans);color:var(--ink);white-space:nowrap;cursor:pointer}
+  .trfsw-b b{font-family:var(--mono);margin-left:4px;color:var(--muted)}
+  .trfsw-b.on{background:#0f172a;border-color:#0f172a;color:#fff}.trfsw-b.on b{color:#7dd3fc}
+  .trfauto{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#f1f5f9;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 10px;font-size:13px}
+  .trfauto span{color:var(--muted);font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
+
 </style>
 </head>
 <body>
@@ -327,6 +338,7 @@
       </div>
     </details>
 
+    <div id="trfswitch" class="trfsw"></div>
     <div class="chips" id="chips"></div>
 
     <div class="card flush">
@@ -373,6 +385,7 @@
   <section id="tab-list" hidden>
     <div class="card">
       <div class="grid2">
+        <div class="field" style="margin:0;grid-column:1/-1"><label for="r_trf">Transformer</label><select id="r_trf"></select></div>
         <div class="field" style="margin:0"><label for="r_filter">Type</label><select id="r_filter"></select></div>
         <div class="field" style="margin:0"><label for="r_search">Search</label><input id="r_search" placeholder="Pole, house, meter, name"></div>
       </div>
