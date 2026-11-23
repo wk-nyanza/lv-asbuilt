@@ -1,5 +1,5 @@
 // WK LV As-Built (Nyanza) — offline app shell. Bump CACHE on every release.
-var CACHE='wklv-nyz-v8';
+var CACHE='wklv-nyz-v9';
 var ASSETS=['./','./index.html','./app.js','./tracker.html','./manifest.webmanifest',
   './nyanza-transformers.js','./nyanza-villages.js','./nyanza-customers.js',
   './exceljs.min.js','./jszip.min.js','./zxing.min.js','./nyanza-template.xlsx',

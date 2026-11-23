@@ -187,7 +187,7 @@
   .savebar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:8px 14px calc(10px + var(--safe-b))}
   .savebar .in{max-width:780px;margin:0 auto}
   #savestate{font:700 11px var(--mono);text-align:center;margin-bottom:6px}
-  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + var(--safe-b));background:#1e293b;color:#fff;padding:10px 16px;border-radius:99px;font-size:13.5px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s;max-width:92vw;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+  .toast{z-index:2100!important;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + var(--safe-b));background:#1e293b;color:#fff;padding:10px 16px;border-radius:99px;font-size:13.5px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s;max-width:92vw;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.22)}
   .toast.on{opacity:1}
   .modal{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.6);display:grid;place-items:center;padding:20px}
   .modal .box{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
@@ -199,6 +199,23 @@
   .credit b{color:#334155}
   .leaflet-popup-content{font-size:13px;line-height:1.5}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* ---------- full-screen map ---------- */
+  body.fsmap{overflow:hidden}
+  #mapcard.fs{position:fixed;inset:0;z-index:1500;margin:0;border-radius:0;border:0;display:flex;flex-direction:column;padding-top:var(--safe-t);background:#0f172a}
+  #mapcard.fs .mapbar{background:#0f172a;border:0;padding:8px}
+  #mapcard.fs .mapbar button{background:#1e293b;color:#e2e8f0;border-color:#334155}
+  #mapcard.fs .mapbar button[aria-pressed="true"]{background:#0ea5e9;border-color:#0ea5e9;color:#fff}
+  #mapcard.fs #satmap,#mapcard.fs #minimap{flex:1 1 auto;height:auto!important;min-height:0;border:0}
+  #mapcard.fs .pad,#mapcard.fs #satnote{display:none!important}
+  #mapcard.fs .legend{background:#0f172a;color:#cbd5e1;padding:6px 10px calc(6px + var(--safe-b))}
+  .mapbar button#btn_move[aria-pressed="true"]{background:#f59e0b;border-color:#f59e0b;color:#111}
+  #mapsheet{position:absolute;left:8px;right:8px;bottom:calc(40px + var(--safe-b));z-index:1000;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:12px 14px;max-height:55vh;overflow:auto}
+  .shh{display:flex;align-items:center;gap:8px;margin-bottom:6px}.shh .tag{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.shh b{font-size:18px}
+  .shx{margin-left:auto;border:0;background:#f1f5f9;border-radius:99px;width:34px;height:34px;font-size:15px}
+  .shrows div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}.shrows span{color:var(--muted)}.shrows b{text-align:right}
+  #mapsheet label{margin-top:10px}
+  .ptlbl{background:rgba(15,23,42,.82)!important;color:#fff!important;border:0!important;font:700 11px var(--sans)!important;padding:1px 5px!important;border-radius:5px!important;box-shadow:none!important}
+  .ptlbl::before{display:none!important}
 </style>
 </head>
 <body>
@@ -264,18 +281,22 @@
         <button id="mapSat">Satellite</button>
         <button id="mapDiagram">Diagram</button>
         <button id="mapMe" aria-pressed="false">◎ <span>My position</span></button>
+        <button id="btn_fs" onclick="mapFs?closeMapFs():openMapFs()">⛶ Full screen</button>
+        <button id="btn_move" onclick="toggleMove()" aria-pressed="false">🔒 Move points</button>
+        <button id="btn_undo" class="hidden" onclick="undoMove()">↶ Undo move</button>
         <span class="netpill" id="netPill">…</span>
       </div>
       <svg id="minimap" viewBox="0 0 320 240" style="width:100%;height:240px;display:block;background:#f8fafc" aria-label="Collected points"></svg>
       <div id="satmap" style="display:none;width:100%;height:340px"></div>
       <div id="satnote" class="note" style="display:none;padding:6px 12px"></div>
+      <div id="mapsheet" class="hidden"></div>
       <div class="legend">
         <span><i style="background:#5D6B75"></i>pole</span><span><i style="background:#12795B"></i>customer</span>
         <span><i style="background:#D93A2B"></i>transformer</span><span><i style="background:#2563eb"></i>you</span>
         <span id="maplbl"></span>
       </div>
       <div class="pad" style="padding-top:6px">
-        <p class="note" style="margin:0">On satellite: tap a point to edit it, drag it if the GPS was off. Red squares are the design transformers.</p>
+        <p class="note" style="margin:0">⛶ Full screen for easy editing: tap a point to see it and change its span or supply pole; <b>Move points</b> to drag a point to its true position (↶ Undo). Red squares are the design transformers.</p>
         <p class="note" id="dlbar" style="margin:6px 0 0;display:none;color:var(--accent);font-weight:700"></p>
         <details class="sub" style="margin-top:4px">
           <summary>Offline map <span id="tilestat" class="note" style="font-weight:400"></span></summary>
