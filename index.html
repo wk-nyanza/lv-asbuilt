@@ -227,8 +227,10 @@
   .trfauto{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#f1f5f9;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 10px;font-size:13px}
   .trfauto span{color:var(--muted);font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
 
-  .logowrap{position:relative;flex:0 0 auto;display:inline-flex}
-  header img.author{position:absolute;right:-8px;bottom:-7px;width:24px;height:24px;border-radius:50%;border:1.5px solid #7dd3fc;object-fit:cover;background:#0f172a}
+  img.au{width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:-4px;margin-right:4px;border:1px solid #7dd3fc}
+  .brand small.by img.au{width:15px;height:15px;margin-right:3px}
+  .credit img.au{width:20px;height:20px;vertical-align:-6px;border-color:#0ea5e9}
+  img.aubig{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #7dd3fc;flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -251,8 +253,8 @@
 
 <header>
   <div class="hrow">
-    <span class="logowrap"><img class="logo" src="logo-mark.png" alt="WK LV As-Built"><img class="author" src="author.png" alt="Eng. Wilbert KIRARA" title="Eng. Wilbert KIRARA"></span>
-    <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by">by Eng. Wilbert KIRARA</small></div>
+    <img class="logo" src="logo-mark.png" alt="WK LV As-Built">
+    <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by"><img class="au" src="author.png" alt="">Eng. Wilbert KIRARA</small></div>
     <span class="hsp"></span>
     <button class="sync off" id="syncChip" onclick="syncNow(true)">☁ off</button>
     <button class="agent" id="agentpill">👤 —</button>
@@ -465,7 +467,7 @@
       <div class="pad exgrid">
         <button class="act ghost hidden" id="installBtn" onclick="doInstall()">⤓ Install on this phone</button>
         <button class="act ghost" onclick="prepareOCR(true)">🪪 Prepare the ID-card reader for offline use</button>
-        <div class="about"><div class="mono">WK</div><div><b>Eng. Wilbert KIRARA</b><span>Expert Surveyor in Electrical Power Lines<br>Creator of WK LV As-Built and WK Connect Survey</span></div></div>
+        <div class="about"><img class="aubig" src="author.png" alt="Eng. Wilbert KIRARA"><div><b>Eng. Wilbert KIRARA</b><span>Expert Surveyor in Electrical Power Lines<br>Creator of WK LV As-Built and WK Connect Survey</span></div></div>
         <div class="note" id="appver"></div>
       </div>
     </div>
@@ -477,7 +479,7 @@
     <div id="refbody"></div>
   </section>
 </div>
-<div class="credit">WK LV As-Built · Nyanza · created by <b>Eng. Wilbert KIRARA</b> · Expert Surveyor in Electrical Power Lines</div>
+<div class="credit">WK LV As-Built · Nyanza · created by <img class="au" src="author.png" alt="Eng. Wilbert KIRARA"><b>Eng. Wilbert KIRARA</b> · Expert Surveyor in Electrical Power Lines</div>
 
 <div class="savebar" id="savebar"><div class="in"><div id="savestate" style="color:var(--good)">✓ saved on phone</div><button class="act" id="btn_save">💾 Save point</button></div></div>
 <div class="toast" id="toast"></div>
