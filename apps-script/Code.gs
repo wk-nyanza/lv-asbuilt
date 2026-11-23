@@ -1,25 +1,34 @@
 /**
  * WK LV As-Built — Nyanza : synchronisation server (Google Apps Script)
  * (c) 2026 Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved.
- * ---------------------------------------------------------------------
+ * ---------------------------------------------------------------------------
  * Receives the points + stamped photos from the phones and stores them in:
  *   - this Google Sheet: one tab per layer (Transformers, Poles, Customers),
  *     one row per point, updated in place when the point is edited
- *   - a Drive folder "WK LV As-Built - Nyanza Photos/<Transformer>/"
+ *   - Google Drive, one folder per transformer, same layout as the design packages:
+ *       WK LV As-Built - Nyanza/<Sector>/<Transformer>/
+ *           Information Data/   Excel (RESERVE) + CSV tables, updated by the phones
+ *           KMZ/                Google Earth file
+ *           Shapefile/          Transformer, Poles, LV_Network, Customers, Service_Cable (TM Rwanda)
+ *           Photos/Transformer, Photos/Poles, Photos/Customers
+ *           Map PDF/, MXD/      for the office
+ *           Backup/             phone backup (.wklv.json) of this transformer
  *
- * SETUP (once): new Google Sheet > Extensions > Apps Script > paste this file > Save >
- * Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone) > copy the /exec URL
- * > in the app: Export > Automatic sync > Server settings > paste > Test & save.
+ * SETUP (once): Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone)
+ * > copy the /exec URL > in the app: Export > Automatic sync > Server settings.
  * TOKEN must equal SYNC_TOKEN in app.js.
  */
 const TOKEN = 'wklvnyz-7Qm2Xc9TfR4pLs8VdK3w';
 const SHEET_ID = '1Arle-vNaPLpHZDYff3MTZtBxY37G78dALa9XITsF4T8'; // Google Sheet "WK LV As-Built - Nyanza"
-const ROOT_FOLDER = 'WK LV As-Built - Nyanza Photos';
+const ROOT_FOLDER = 'WK LV As-Built - Nyanza';
+const OLD_ROOT = 'WK LV As-Built - Nyanza Photos';          // first version: photos only
 const TABS = ['Transformers', 'Poles', 'Customers'];
+const PHOTO_SUB = { Transformers: 'Photos/Transformer', Poles: 'Photos/Poles', Customers: 'Photos/Customers' };
+const SUBFOLDERS = ['Information Data', 'KMZ', 'Shapefile', 'Photos/Transformer', 'Photos/Poles', 'Photos/Customers', 'Map PDF', 'MXD', 'Backup'];
 const TEXT_COLS = ['Meter_number', 'ID', 'Phone_number', 'UPI', 'HSE No.', 'POLES', 'Pole_Numbe', 'From_Pole'];
 const TAIL = ['Photo', 'Photo File ID', 'Received (server)', 'Status'];
 
-function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', time: new Date().toISOString() }); }
+function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', version: 2, time: new Date().toISOString() }); }
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -27,9 +36,12 @@ function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
     if (d.token !== TOKEN) return out({ ok: false, error: 'unauthorised' });
-    if (d.action === 'ping') return out({ ok: true });
+    if (d.action === 'ping') return out({ ok: true, version: 2 });
     if (d.action === 'delete') return out(markDeleted(d.id));
     if (d.action === 'upsert') return out(upsert(d));
+    if (d.action === 'files') return out(saveFiles(d));
+    if (d.action === 'folders') return out(makeFolders(d.trfs || []));
+    if (d.action === 'migrate') return out(migrate());
     return out({ ok: false, error: 'unknown action' });
   } catch (err) {
     return out({ ok: false, error: String(err) });
@@ -40,7 +52,45 @@ function doPost(e) {
 
 function book_() { return SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet(); }
 
-/* the tab of a layer; its header = Record ID + the app's columns + Photo / Status */
+/* ---------- Drive folders (ids cached in the script properties) ---------- */
+function child_(parent, name) {
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+function cached_(key, make) {
+  const P = PropertiesService.getScriptProperties();
+  const id = P.getProperty(key);
+  if (id) { try { const f = DriveApp.getFolderById(id); if (!f.isTrashed()) return f; } catch (e) {} }
+  const f = make(); P.setProperty(key, f.getId()); return f;
+}
+function root_() {
+  return cached_('root', function () { const it = DriveApp.getFoldersByName(ROOT_FOLDER); return it.hasNext() ? it.next() : DriveApp.createFolder(ROOT_FOLDER); });
+}
+function clean_(s) { return String(s || '').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+/* folder of a transformer, under its sector; the whole package layout is created the first time */
+function trfFolder_(trf, sector) {
+  const name = clean_(trf) || 'No transformer';
+  return cached_('trf:' + name, function () {
+    const sec = clean_(sector) || 'Other';
+    const f = child_(child_(root_(), sec), name);
+    SUBFOLDERS.forEach(function (p) { sub_(f, name, p); });
+    return f;
+  });
+}
+function sub_(trfFolder, trfName, path) {
+  return cached_('sub:' + trfName + '|' + path, function () {
+    let f = trfFolder; path.split('/').forEach(function (n) { f = child_(f, n); }); return f;
+  });
+}
+function folderFor_(trf, sector, path) { const f = trfFolder_(trf, sector); return sub_(f, clean_(trf) || 'No transformer', path); }
+
+function makeFolders(trfs) {
+  const done = [];
+  trfs.forEach(function (t) { if (t && t.n) { trfFolder_(t.n, t.s); done.push(t.n); } });
+  return { ok: true, folders: done.length, root: root_().getUrl() };
+}
+
+/* ---------- sheet ---------- */
 function tab_(name, header) {
   const ss = book_();
   let sh = ss.getSheetByName(name);
@@ -50,29 +100,18 @@ function tab_(name, header) {
     sh.getRange(1, 1, 1, full.length).setValues([full]).setFontWeight('bold').setBackground('#d9e2f3');
     sh.setFrozenRows(1);
   } else {
-    // add any new column the app sends at the end, before nothing is lost
     const cur = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String);
     full.forEach(function (h) { if (cur.indexOf(h) < 0) { sh.getRange(1, sh.getLastColumn() + 1).setValue(h).setFontWeight('bold').setBackground('#d9e2f3'); cur.push(h); } });
   }
   return sh;
 }
-
 function headers_(sh) { return sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String); }
-
 function findRow_(sh, id) {
   const last = sh.getLastRow();
   if (last < 2) return 0;
   const ids = sh.getRange(2, 1, last - 1, 1).getValues();
   for (let i = 0; i < ids.length; i++) if (String(ids[i][0]) === String(id)) return i + 2;
   return 0;
-}
-
-function folder_(trf) {
-  const it = DriveApp.getFoldersByName(ROOT_FOLDER);
-  const root = it.hasNext() ? it.next() : DriveApp.createFolder(ROOT_FOLDER);
-  const name = trf || 'No transformer';
-  const sub = root.getFoldersByName(name);
-  return sub.hasNext() ? sub.next() : root.createFolder(name);
 }
 
 function upsert(d) {
@@ -89,17 +128,55 @@ function upsert(d) {
   if (d.photo) {
     if (rec['Photo File ID']) { try { DriveApp.getFileById(rec['Photo File ID']).setTrashed(true); } catch (e) {} }
     const blob = Utilities.newBlob(Utilities.base64Decode(d.photo), 'image/jpeg', d.photoName || (d.id + '.jpg'));
-    const f = folder_(d.trf).createFile(blob);
+    const f = folderFor_(d.trf, d.sector || rec['Sector'], PHOTO_SUB[d.sheet] || 'Photos').createFile(blob);
     rec['Photo File ID'] = f.getId(); rec['Photo'] = f.getUrl();
   }
   rec['Received (server)'] = new Date();
   rec['Status'] = 'OK';
   const values = H.map(function (h) { const v = rec[h]; return v === undefined || v === null ? '' : v; });
   if (!row) { row = sh.getLastRow() + 1; }
-  // identifiers stay text (no lost leading zeros, no scientific notation)
   H.forEach(function (h, i) { if (TEXT_COLS.indexOf(h) >= 0) sh.getRange(row, i + 1).setNumberFormat('@'); });
   sh.getRange(row, 1, 1, H.length).setValues([values]);
   return { ok: true, id: d.id, photo: rec['Photo'] || '' };
+}
+
+/* data files of one transformer (KMZ, shapefiles, Excel, CSV, backup): the newest replaces the previous one */
+function saveFiles(d) {
+  if (!d.trf || !d.files) return { ok: false, error: 'missing data' };
+  let n = 0;
+  d.files.forEach(function (x) {
+    const folder = folderFor_(d.trf, d.sector, x.folder || 'Information Data');
+    const old = folder.getFilesByName(x.name);
+    while (old.hasNext()) old.next().setTrashed(true);
+    const bytes = x.b64 != null ? Utilities.base64Decode(x.b64) : Utilities.newBlob(x.text || '').getBytes();
+    folder.createFile(Utilities.newBlob(bytes, x.mime || 'application/octet-stream', x.name)); n++;
+  });
+  return { ok: true, files: n, folder: trfFolder_(d.trf, d.sector).getUrl() };
+}
+
+/* moves the photos of the first version (one flat folder per transformer) into the new layout */
+function migrate() {
+  const ss = book_(); let moved = 0;
+  TABS.forEach(function (name) {
+    const sh = ss.getSheetByName(name); if (!sh || sh.getLastRow() < 2) return;
+    const H = headers_(sh), iF = H.indexOf('Photo File ID'), iT = H.indexOf('TRF_Name'), iS = H.indexOf('Sector'), iSt = H.indexOf('Status');
+    const V = sh.getRange(2, 1, sh.getLastRow() - 1, H.length).getValues();
+    V.forEach(function (r) {
+      const id = r[iF]; if (!id) return;
+      if (iSt >= 0 && String(r[iSt]).indexOf('DELETED') === 0) return;
+      try { const f = DriveApp.getFileById(id); if (f.isTrashed()) return; f.moveTo(folderFor_(r[iT], r[iS], PHOTO_SUB[name])); moved++; } catch (e) {}
+    });
+  });
+  // the old folders are trashed only when nothing is left in them
+  let trashed = 0;
+  const it = DriveApp.getFoldersByName(OLD_ROOT);
+  while (it.hasNext()) {
+    const o = it.next(); let empty = !o.getFiles().hasNext();
+    const subs = o.getFolders();
+    while (subs.hasNext()) { const s = subs.next(); if (s.getFiles().hasNext() || s.getFolders().hasNext()) empty = false; }
+    if (empty) { o.setTrashed(true); trashed++; }
+  }
+  return { ok: true, moved: moved, oldFoldersTrashed: trashed, root: root_().getUrl() };
 }
 
 function markDeleted(id) {
@@ -110,6 +187,8 @@ function markDeleted(id) {
     const H = headers_(sh);
     sh.getRange(row, H.indexOf('Status') + 1).setValue('DELETED on phone ' + new Date().toISOString());
     sh.getRange(row, 1, 1, H.length).setFontColor('#9ca3af');
+    const iF = H.indexOf('Photo File ID');
+    if (iF >= 0) { const pid = sh.getRange(row, iF + 1).getValue(); if (pid) { try { DriveApp.getFileById(pid).setTrashed(true); } catch (e) {} } }
     return { ok: true, id: id };
   }
   return { ok: true, id: id, note: 'not found' };

@@ -422,9 +422,11 @@
     <div class="card flush">
       <div class="ch">☁ Automatic sync (Google Drive)</div>
       <div class="pad exgrid">
-        <div class="note">When the phone has network, every saved point and its stamped photo go to the project Google Sheet (one tab per layer) and Drive folder. Points stay on the phone as well.</div>
+        <div class="note">When the phone has network, every saved point and its stamped photo go to the project Google Sheet (one tab per layer) and to the folder of its transformer in Google Drive: <b>Information Data</b> (Excel RESERVE + CSV), <b>KMZ</b>, <b>Shapefile</b>, <b>Photos</b> (Transformer / Poles / Customers) and <b>Backup</b>. The files are refreshed at most every 20 minutes. Points stay on the phone as well.</div>
         <div id="syncInfo" style="font-size:13px;font-weight:600"></div>
         <button class="act" onclick="syncNow(true)">⟳ Sync now</button>
+        <button class="act ghost" onclick="driveNow()">📁 Update the Drive folders now</button>
+        <div id="driveInfo" class="note" style="margin:0"></div>
         <details class="sub"><summary>Server settings (supervisor)</summary>
           <div class="field" style="margin-top:8px"><label for="syncUrlIn">Sync server URL (Apps Script /exec)</label><input id="syncUrlIn" placeholder="https://script.google.com/macros/s/…/exec"></div>
           <button class="act ghost" onclick="saveSyncUrl()">Test &amp; save</button>
