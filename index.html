@@ -441,6 +441,7 @@
         <button class="exbtn" id="ex_xlsx" onclick="exportXLSXOnly()"><span class="ex-ic" style="background:#059669">XLS</span><span><b>Excel report — customers</b><small>RESERVE format, Nyanza template</small></span></button>
         <button class="exbtn" id="ex_kml"><span class="ex-ic" style="background:#0369a1">KMZ</span><span><b>Google Earth</b><small>Every point with its stamped photo and details</small></span></button>
         <button class="exbtn" id="ex_shp"><span class="ex-ic" style="background:#7c3aed">SHP</span><span><b>Shapefiles</b><small>Transformer, poles, LV network, customers, service cables · TM Rwanda</small></span></button>
+        <button class="exbtn" onclick="location.href='plans.html?trf='+encodeURIComponent(ctx.trf||'')+(ctx.trf?'&amp;auto=1':'')"><span class="ex-ic" style="background:#b91c1c">MAP</span><span><b>As-built map (PDF A0)</b><small>Sheet with map, tables, quantities, legend and title block — for the office</small></span></button>
         <button class="exbtn" id="ex_csvzip"><span class="ex-ic" style="background:#d97706">CSV</span><span><b>CSV tables</b><small>One table per layer, in one ZIP</small></span></button>
         <p class="note" id="exstat" style="margin:0"></p>
         <p class="note" id="lastsend" style="margin:0"></p>

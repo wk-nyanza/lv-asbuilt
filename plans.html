@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- WK LV As-Built — Nyanza : as-built map sheets. Copyright (c) 2026 Eng. Wilbert KIRARA, Expert Surveyor in Electrical Power Lines. All rights reserved. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WK LV As-Built — As-built map (Nyanza)</title>
+<meta name="theme-color" content="#0f172a">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<style>
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--blue:#0369a1;--z:0.45}
+  *{box-sizing:border-box} body{margin:0;font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:#f1f5f9}
+  header{background:#0f172a;color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px}
+  header img{width:34px;height:34px} header b{font-size:17px} header small{display:block;color:#94a3b8;font-size:12px}
+  header a{margin-left:auto;color:#7dd3fc;font-size:13px}
+  main{display:grid;grid-template-columns:330px 1fr;gap:14px;padding:14px;align-items:start}
+  @media(max-width:900px){ main{grid-template-columns:1fr} }
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+  label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+  select,input[type=text],input[type=file]{width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  button{font:600 14px system-ui,sans-serif;border:0;border-radius:9px;padding:11px 12px;cursor:pointer;width:100%;margin-top:8px;background:#e2e8f0;color:var(--ink)}
+  button.go{background:var(--blue);color:#fff;font-size:15px} button:disabled{opacity:.45;cursor:default}
+  .chk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px} .chk input{width:18px;height:18px}
+  #status{margin-top:10px;font-size:13px;color:#334155}
+  #qa{font-size:12.5px;margin-top:12px;max-height:280px;overflow:auto} #qa ul{margin:6px 0 0;padding-left:18px} #qa li{margin:2px 0}
+  .view{overflow:auto;max-height:calc(100vh - 110px);background:#94a3b8;border-radius:12px;padding:12px}
+  .pg{margin:0 auto 14px;width:calc(1189mm * var(--z))} .pgh{color:#fff;font-size:12px;margin:0 0 4px}
+  .pg svg{width:calc(1189mm * var(--z));height:calc(841mm * var(--z));background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.3);display:block}
+  .zoom{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:12px} .zoom input{flex:1}
+  .note{font-size:12px;color:var(--muted);margin:8px 0 0}
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 16px;border-radius:99px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+  #toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header><img src="logo-mark.png" alt=""><div><b>As-built map — LV network</b><small>WK LV As-Built · Nyanza · by Eng. Wilbert KIRARA</small></div><a href="./">← back to the app</a></header>
+<main>
+  <section class="card">
+    <label for="trf">Transformer</label><select id="trf"></select>
+    <label for="src">Data</label>
+    <select id="src">
+      <option value="sheet">Google Sheet — all agents (recommended)</option>
+      <option value="both">Google Sheet + this phone</option>
+      <option value="phone">This phone only</option>
+      <option value="file">A backup file (.wklv.json)</option>
+    </select>
+    <div id="filebox" style="display:none"><label for="file">Backup file</label><input type="file" id="file" accept=".json,application/json"></div>
+    <div class="row">
+      <div><label for="o_paper">Paper</label><select id="o_paper"><option>A0</option><option>A1</option><option>A2</option><option>A3</option></select></div>
+      <div><label for="o_scale">Scale 1:</label><select id="o_scale"><option value="">auto</option><option>500</option><option>1000</option><option>1500</option><option>2000</option><option>2500</option><option>3000</option><option>4000</option><option>5000</option></select></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="o_osm" checked> Roads, buildings, rivers (OpenStreetMap)</label>
+    <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Title block</summary>
+      <label for="o_surv">Surveyed by</label><input type="text" id="o_surv" placeholder="agents of the data">
+      <div class="row"><div><label for="o_prep">Prepared by</label><input type="text" id="o_prep" value="Eng. Wilbert KIRARA"></div>
+        <div><label for="o_prepfn">Function</label><input type="text" id="o_prepfn" value="Survey &amp; Design"></div></div>
+      <label for="o_chk">Checked by</label><input type="text" id="o_chk">
+      <div class="row"><div><label for="o_rev">Revision</label><input type="text" id="o_rev" value="A"></div>
+        <div><label for="o_status">Status</label><input type="text" id="o_status" value="As-built"></div></div>
+      <label for="o_revdesc">Revision description</label><input type="text" id="o_revdesc" value="As-built survey (field data, WK LV As-Built)">
+    </details>
+    <button class="go" id="go">Draw the map</button>
+    <div id="status"></div>
+    <button id="pdf" disabled>⤓ Download the PDF</button>
+    <button id="drive" disabled>☁ Save the PDF in Drive (Map PDF)</button>
+    <button id="svg" disabled>⤓ SVG (for Illustrator / Inkscape)</button>
+    <div class="zoom">Zoom <input type="range" id="zoom" min="0.2" max="1.6" step="0.05" value="0.45"></div>
+    <div id="qa"></div>
+    <p class="note">Coordinates TM Rwanda / ITRF 2005. The sheet follows the Nyanza LV package layout (Rwara model): map, customers and poles tables, quantities, legend, location plan and the project title block.</p>
+  </section>
+  <section class="view" id="sheet"></section>
+</main>
+<div id="toast"></div>
+<script src="nyanza-transformers.js"></script>
+<script src="nyanza-villages.js"></script>
+<script src="nyanza-customers.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script src="svg2pdf.umd.min.js"></script>
+<script src="plans.js"></script>
+</body>
+</html>

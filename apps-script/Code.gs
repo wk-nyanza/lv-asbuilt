@@ -28,7 +28,7 @@ const SUBFOLDERS = ['Information Data', 'KMZ', 'Shapefile', 'Photos/Transformer'
 const TEXT_COLS = ['Meter_number', 'ID', 'Phone_number', 'UPI', 'HSE No.', 'POLES', 'Pole_Numbe', 'From_Pole'];
 const TAIL = ['Photo', 'Photo File ID', 'Received (server)', 'Status'];
 
-function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', version: 2, time: new Date().toISOString() }); }
+function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', version: 3, time: new Date().toISOString() }); }
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -36,12 +36,13 @@ function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents);
     if (d.token !== TOKEN) return out({ ok: false, error: 'unauthorised' });
-    if (d.action === 'ping') return out({ ok: true, version: 2 });
+    if (d.action === 'ping') return out({ ok: true, version: 3 });
     if (d.action === 'delete') return out(markDeleted(d.id));
     if (d.action === 'upsert') return out(upsert(d));
     if (d.action === 'files') return out(saveFiles(d));
     if (d.action === 'folders') return out(makeFolders(d.trfs || []));
     if (d.action === 'migrate') return out(migrate());
+    if (d.action === 'export') return out(exportTrf(d.trf));
     return out({ ok: false, error: 'unknown action' });
   } catch (err) {
     return out({ ok: false, error: String(err) });
@@ -177,6 +178,20 @@ function migrate() {
     if (empty) { o.setTrashed(true); trashed++; }
   }
   return { ok: true, moved: moved, oldFoldersTrashed: trashed, root: root_().getUrl() };
+}
+
+/* every point of one transformer (deleted ones excluded), for the as-built map */
+function exportTrf(trf) {
+  if (!trf) return { ok: false, error: 'missing transformer' };
+  const ss = book_(), data = {};
+  TABS.forEach(function (name) {
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 2) { data[name] = { header: [], rows: [] }; return; }
+    const H = headers_(sh), iT = H.indexOf('TRF_Name'), iSt = H.indexOf('Status');
+    const V = sh.getRange(2, 1, sh.getLastRow() - 1, H.length).getDisplayValues();
+    data[name] = { header: H, rows: V.filter(function (r) { return String(r[iT]).trim() === String(trf).trim() && String(r[iSt]).indexOf('DELETED') !== 0; }) };
+  });
+  return { ok: true, trf: trf, data: data, time: new Date().toISOString() };
 }
 
 function markDeleted(id) {
