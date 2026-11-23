@@ -1,11 +1,11 @@
 // WK LV As-Built (Nyanza) — offline app shell. Bump CACHE on every release.
-var CACHE='wklv-nyz-v17';
+var CACHE='wklv-nyz-v18';
 var ASSETS=['./','./index.html','./app.js','./tracker.html','./manifest.webmanifest',
   './nyanza-transformers.js','./nyanza-villages.js','./nyanza-customers.js',
   './exceljs.min.js','./jszip.min.js','./zxing.min.js','./nyanza-template.xlsx',
   './leaflet/leaflet.js','./leaflet/leaflet.css','./leaflet/images/layers.png','./leaflet/images/layers-2x.png',
   './leaflet/images/marker-icon.png','./leaflet/images/marker-icon-2x.png','./leaflet/images/marker-shadow.png',
-  './icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./favicon-32.png','./logo-mark.png'];
+  './icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./favicon-32.png','./logo-mark.png','./author.png'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ASSETS);}).then(function(){return self.skipWaiting();}));
 });

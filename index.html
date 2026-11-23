@@ -227,6 +227,8 @@
   .trfauto{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#f1f5f9;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 10px;font-size:13px}
   .trfauto span{color:var(--muted);font-size:11px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
 
+  .logowrap{position:relative;flex:0 0 auto;display:inline-flex}
+  header img.author{position:absolute;right:-8px;bottom:-7px;width:24px;height:24px;border-radius:50%;border:1.5px solid #7dd3fc;object-fit:cover;background:#0f172a}
 </style>
 </head>
 <body>
@@ -243,13 +245,13 @@
     <div class="field req"><label for="g_name">Full name</label><input id="g_name" placeholder="e.g. Jean Bosco NIYONZIMA" autocapitalize="words"></div>
     <div class="field"><label for="g_tel">Phone <em>optional</em></label><input id="g_tel" inputmode="tel" placeholder="07XXXXXXXX"></div>
     <button class="act" id="g_ok">Continue</button>
-    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:12px">WK LV As-Built — created by <b>Eng. Wilbert KIRARA</b>,<br>Expert Surveyor in Electrical Power Lines</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-size:11.5px;color:var(--muted);margin-top:14px;text-align:left"><img src="author.png" alt="Eng. Wilbert KIRARA" style="width:46px;height:46px;border-radius:50%;border:2px solid #0ea5e9;flex:0 0 auto"><div>WK LV As-Built — created by <b>Eng. Wilbert KIRARA</b>,<br>Expert Surveyor in Electrical Power Lines</div></div>
   </div>
 </div>
 
 <header>
   <div class="hrow">
-    <img class="logo" src="logo-mark.png" alt="WK LV As-Built">
+    <span class="logowrap"><img class="logo" src="logo-mark.png" alt="WK LV As-Built"><img class="author" src="author.png" alt="Eng. Wilbert KIRARA" title="Eng. Wilbert KIRARA"></span>
     <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by">by Eng. Wilbert KIRARA</small></div>
     <span class="hsp"></span>
     <button class="sync off" id="syncChip" onclick="syncNow(true)">☁ off</button>
