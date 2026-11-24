@@ -235,6 +235,9 @@
   .fromchip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font:700 13px var(--sans);color:var(--ink);cursor:pointer}
   .fromchip small{font-weight:600;color:var(--muted);font-family:var(--mono)}
   .fromchip.on{background:#0f172a;border-color:#0f172a;color:#fff}.fromchip.on small{color:#7dd3fc}
+  .updbtn{background:#0369a1;border:1px solid #0ea5e9;color:#fff;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;flex:0 0 auto}
+  .updbtn.spin{opacity:.6}
+  @media(max-width:520px){ .hrow .agent .agn{display:none} .hrow .agent{padding:6px 8px;text-overflow:clip;max-width:none} .updbtn{padding:6px 8px} .hrow{gap:7px} }
 </style>
 </head>
 <body>
@@ -260,6 +263,7 @@
     <img class="logo" src="logo-mark.png" alt="WK LV As-Built">
     <div class="brand">WK LV As-Built<small id="zonelbl">NYANZA · LV NETWORK AS-BUILT</small><small class="by"><img class="au" src="author.png" alt="">Eng. Wilbert KIRARA</small></div>
     <span class="hsp"></span>
+    <button type="button" id="btn_update" class="updbtn" onclick="appUpdate()" title="Get the newest version of the app">⟳ Update</button>
     <button class="sync off" id="syncChip" onclick="syncNow(true)">☁ off</button>
     <button class="agent" id="agentpill">👤 —</button>
   </div>
