@@ -28,15 +28,17 @@ const SUBFOLDERS = ['Information Data', 'KMZ', 'Shapefile', 'Photos/Transformer'
 const TEXT_COLS = ['Meter_number', 'ID', 'Phone_number', 'UPI', 'HSE No.', 'POLES', 'Pole_Numbe', 'From_Pole'];
 const TAIL = ['Photo', 'Photo File ID', 'Received (server)', 'Status'];
 
-function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', version: 2, time: new Date().toISOString() }); }
+function doGet() { return out({ ok: true, app: 'WK LV As-Built Nyanza sync', version: 6, time: new Date().toISOString() }); }
 
 function doPost(e) {
+  let d;
+  try { d = JSON.parse(e.postData.contents); } catch (err) { return out({ ok: false, error: 'bad request' }); }
+  if (d.token !== TOKEN) return out({ ok: false, error: 'unauthorised' });
+  if (d.action === 'ping') return out({ ok: true, version: 6 });
+  if (d.action === 'pull') { try { return out(pull(d.agent)); } catch (err) { return out({ ok: false, error: String(err) }); } }   // read only: no lock
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  if (!lock.tryLock(60000)) return out({ ok: false, error: 'server busy, retry' });
   try {
-    const d = JSON.parse(e.postData.contents);
-    if (d.token !== TOKEN) return out({ ok: false, error: 'unauthorised' });
-    if (d.action === 'ping') return out({ ok: true, version: 2 });
     if (d.action === 'delete') return out(markDeleted(d.id));
     if (d.action === 'upsert') return out(upsert(d));
     if (d.action === 'files') return out(saveFiles(d));
@@ -177,6 +179,28 @@ function migrate() {
     if (empty) { o.setTrashed(true); trashed++; }
   }
   return { ok: true, moved: moved, oldFoldersTrashed: trashed, root: root_().getUrl() };
+}
+
+/* same person even with a small spelling change (Ntaganza / Ntaganzwa) */
+function toks_(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean).sort(); }
+function sameName_(a, b) {
+  if (!a.length || a.length !== b.length) return false;
+  return a.every(function (t, i) { const u = b[i]; return t === u || (t.slice(0, 5) === u.slice(0, 5) && Math.abs(t.length - u.length) <= 2); });
+}
+
+/* every point an agent sent (deleted ones excluded): lets a phone get back its own work */
+function pull(agent) {
+  if (!String(agent || '').trim()) return { ok: false, error: 'missing agent' };
+  const want = toks_(agent);
+  const ss = book_(), data = {};
+  TABS.forEach(function (name) {
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 2) { data[name] = { header: [], rows: [] }; return; }
+    const H = headers_(sh), iA = H.indexOf('Agent'), iSt = H.indexOf('Status');
+    const V = sh.getRange(2, 1, sh.getLastRow() - 1, H.length).getDisplayValues();
+    data[name] = { header: H, rows: V.filter(function (r) { return sameName_(want, toks_(r[iA])) && String(r[iSt]).indexOf('DELETED') !== 0; }) };
+  });
+  return { ok: true, data: data };
 }
 
 function markDeleted(id) {

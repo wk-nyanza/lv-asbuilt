@@ -238,6 +238,9 @@
   .updbtn{background:#0369a1;border:1px solid #0ea5e9;color:#fff;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap;flex:0 0 auto}
   .updbtn.spin{opacity:.6}
   @media(max-width:520px){ .hrow .agent .agn{display:none} .hrow .agent{padding:6px 8px;text-overflow:clip;max-width:none} .updbtn{padding:6px 8px} .hrow{gap:7px} }
+  .pullrow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}
+  .pullrow b{display:block;font-size:13.5px}.pullrow span{font-size:12px;color:var(--muted)}
+  .pullrow .act{width:auto;margin:0;padding:8px 12px;flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -350,6 +353,7 @@
       </div>
     </details>
 
+    <div id="pullbanner"></div>
     <div id="trfswitch" class="trfsw"></div>
     <div class="chips" id="chips"></div>
 
@@ -437,6 +441,7 @@
         <div class="note">When the phone has network, every saved point and its stamped photo go to the project Google Sheet (one tab per layer) and to the folder of its transformer in Google Drive: <b>Information Data</b> (Excel RESERVE + CSV), <b>KMZ</b>, <b>Shapefile</b>, <b>Photos</b> (Transformer / Poles / Customers) and <b>Backup</b>. The files are refreshed at most every 20 minutes. Points stay on the phone as well.</div>
         <div id="syncInfo" style="font-size:13px;font-weight:600"></div>
         <button class="act" onclick="syncNow(true)">⟳ Sync now</button>
+        <div class="sub" style="margin-top:6px"><b style="font-size:13px">My points in the Google Sheet</b><p class="note" style="margin:2px 0 6px">If this phone lost its points (new phone, data cleared, another browser), load them back here.</p><div id="pullbox"></div></div>
         <button class="act ghost" onclick="driveNow()">📁 Update the Drive folders now</button>
         <div id="driveInfo" class="note" style="margin:0"></div>
         <details class="sub"><summary>Server settings (supervisor)</summary>
